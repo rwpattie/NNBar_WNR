@@ -1,0 +1,25 @@
+/******************************************************************/
+  This is repository is for the analysis code for the detector
+  test data taken at WNR in February 2013 for the NNBarX 
+  experiment.
+ 
+  Initial creation : March 26,2013
+  Admin : Robert W. Pattie Jr.
+
+  Currently the repo contains : 
+  Dir:
+      wave_form_replay - A ROOT executable that will take the 
+		         raw .fat data to a ROOT TTree object.
+                         Simple analysis is performed, as baseline
+                         determination, max/min ADC values, initial
+                         timestamp, and number of possible peaks are
+                         identified. 
+      
+      MIDAS_programs   - Contains a number of scripts designed to 
+                         run in conjunction with MIDAS to interact
+                         with the ODB to exact run information.
+      
+   -------------------------------------------------------------
+   More will be added to an analysis 
+ 
+/******************************************************************/
