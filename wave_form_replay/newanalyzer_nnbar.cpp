@@ -259,7 +259,15 @@ void process_file(char *flnm,TString dir_save)
   //---------------------------------------------------------------------------------------
   // create an output tree..............
   TTree *t = new TTree("t","data");
-  t->Branch("fadc_event",&fadc_event,"first_time/l:board/I:last/s:adc[5000]:max:min:zero:ped:channel");
+  t->Branch("first_time",&fadc_event.first_time,"first_time/l");
+  t->Branch("board",&fadc_event.board,"board/I");
+  t->Branch("last",&fadc_event.last,"last/s");
+  t->Branch("adc",fadc_event.adc,"adc[last]/s");
+  t->Branch("max",&fadc_event.max,"max/s");
+  t->Branch("min",&fadc_event.min,"min/s");
+  t->Branch("zero",&fadc_event.zero,"zero/s");
+  t->Branch("ped",&fadc_event.ped,"ped/s");
+  t->Branch("channel",&fadc_event.channel,"channel/s");//"first_time/l:board/I:last/s:adc[5000]:max:min:zero:ped:channel");
   // loop through the raw data file
   while(!feof(inf)) {
     // read the header of the current event.
