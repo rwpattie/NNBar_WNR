@@ -67,7 +67,6 @@ struct fadc_board_t {
 };
 // ---------------------------------------------------------------------------------------
 // Define Function Prototypes
-
 void process_file(char *flnm,TString dir_save);
 void Check_Serial(Int_t *lastser,output_header o,Int_t bn);
 Data_Block_t Fill_Data_Blck(UChar_t raw[RAWDATA_LENGTH],Int_t i);
@@ -75,6 +74,8 @@ UShort_t Get_Zero(UShort_t *data,Int_t index);
 void Set_Sample_Data(fadc_board_t *fadc,output_header o,Data_Block_t blck,UShort_t bn,Bool_t FIRST,Bool_t INCRCYCLE);
 void initialize_fadc_data(fadc_board_t *fadc,Int_t nboards,Bool_t FIRST);
 void process_file(char *flnm,TString dir_save);
+void FillTree(fadc_board_t *fadc,TTree *t,Int_t bn,Int_t nchnl);
+//-------------------------------------------------------------------------------------------
 // Define a set of global variables 
 ULong64_t cycleoffset = 0;//pow(2,28);  // Represents the maximum time measured by the 28-bit timestamp
 UShort_t boardnum[3]={1,64,0};//active board numbers as set by the hardware switch...
@@ -111,6 +112,35 @@ void Check_Serial(Int_t *lastser,output_header o,Int_t bn)
       } else{
 	lastser[bn] = o.packet_serial;
       }
+};
+
+void FillTree(fadc_board_t *fadc,TTree *t,Int_t bn,Int_t nchnl)
+{
+          //Int_t nchnl = o.fadc_number;
+	  Int_t index = fadc[bn].channel_data[nchnl].lastindex;
+	  
+	  fadc_event.zero = Get_Zero(fadc[bn].channel_data[nchnl].data,index);
+	  
+	  for (Int_t k = 0; k <= 5000; k++)
+	    if(k < index)
+	      fadc_event.adc[k] = fadc[bn].channel_data[nchnl].data[k];
+	  
+	  fadc_event.first_time = fadc[bn].channel_data[nchnl].ft;
+	  fadc_event.board      = o.board_number;
+	  fadc_event.max        = fadc[bn].channel_data[nchnl].mx;
+	  fadc_event.min        = fadc[bn].channel_data[nchnl].mx;
+	  fadc_event.channel    = (UShort_t)nchnl;
+	  fadc_event.last       = index;
+	  
+	  if (index > 0 ){
+	    UShort_t mean = 0;
+	    if(index > 15){
+	      for(int i = 0 ; i < 15 ; i++)mean += fadc[bn].channel_data[nchnl].data[i];
+	      fadc_event.ped = mean/15.;
+	    } else 
+	       fadc_event.ped = 0;
+	    t->Fill();
+	  }
 };
 //-----------------------------------------------------------------------------------------
 Data_Block_t Fill_Data_Blck(UChar_t raw[RAWDATA_LENGTH],Int_t i)
@@ -294,32 +324,8 @@ void process_file(char *flnm,TString dir_save)
 	Set_Sample_Data(fadc,o,blck,bn,false,true);
       } else {
 	// Fill tree data struct..................................................................
-	  Int_t nchnl = o.fadc_number;
-	  Int_t index = fadc[bn].channel_data[nchnl].lastindex;
-	  
-	  fadc_event.zero = Get_Zero(fadc[bn].channel_data[nchnl].data,index);
-	  
-	  for (Int_t k = 0; k <= 5000; k++)
-	    if(k < index)
-	      fadc_event.adc[k] = fadc[bn].channel_data[nchnl].data[k];
-	  
-	  fadc_event.first_time = fadc[bn].channel_data[nchnl].ft;
-	  fadc_event.board      = o.board_number;
-	  fadc_event.max        = fadc[bn].channel_data[nchnl].mx;
-	  fadc_event.min        = fadc[bn].channel_data[nchnl].mx;
-	  fadc_event.channel    = (UShort_t)o.fadc_number;
-	  fadc_event.last       = index;
-	  
-	  if (index > 0 ){
-	    UShort_t mean = 0;
-	    if(index > 15){
-	      for(int i = 0 ; i < 15 ; i++)mean += fadc[bn].channel_data[nchnl].data[i];
-	      fadc_event.ped = mean/15.;
-	    } else 
-	       fadc_event.ped = 0;
-	    t->Fill();
-	  }
-	  
+	  FillTree(fadc,t,bn);
+	  // increase the cycle number if the current timestamp exceeds the block timestamp
 	  if (fadc[bn].channel_data[nchnl].curr > blck.timestamp) {
 	    fadc[bn].channel_data[nchnl].cycle++;
 	    fprintf(tsrec,"Old Timestamp = %u, New Timestamp = %lli, cycle = %u, Channel = %d\n",fadc[bn].channel_data[nchnl].curr,
