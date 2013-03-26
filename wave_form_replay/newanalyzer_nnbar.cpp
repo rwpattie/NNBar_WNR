@@ -74,7 +74,7 @@ UShort_t Get_Zero(UShort_t *data,Int_t index);
 void Set_Sample_Data(fadc_board_t *fadc,output_header o,Data_Block_t blck,UShort_t bn,Bool_t FIRST,Bool_t INCRCYCLE);
 void initialize_fadc_data(fadc_board_t *fadc,Int_t nboards,Bool_t FIRST);
 void process_file(char *flnm,TString dir_save);
-void FillTree(fadc_board_t *fadc,TTree *t,Int_t bn,Int_t nchnl);
+void FillTree(fadc_board_t *fadc,Fadc_Event &fadc_event,TTree *t,Int_t bn,Int_t nchnl,Int_t nbd);
 //-------------------------------------------------------------------------------------------
 // Define a set of global variables 
 ULong64_t cycleoffset = 0;//pow(2,28);  // Represents the maximum time measured by the 28-bit timestamp
@@ -87,7 +87,7 @@ int main (int argc, char *argv[]) {
 		return 1;
 	}
 		
-	TString dir_save("/media/Data3/WNR_DATA/WNR/WNR-MIDAS_RUN/analyzed_runs");
+	TString dir_save(getenv("WNR_OUTPUT_DATA"));
 	TFile *out_file = new TFile(dir_save + "/" + TString(argv[1]).ReplaceAll(".fat","")+"NA.root", "RECREATE");
 	std::cout << out_file->GetName() << std::endl;
 	
@@ -114,7 +114,7 @@ void Check_Serial(Int_t *lastser,output_header o,Int_t bn)
       }
 };
 
-void FillTree(fadc_board_t *fadc,TTree *t,Int_t bn,Int_t nchnl)
+void FillTree(fadc_board_t *fadc,Fadc_Event &fadc_event,TTree *t,Int_t bn,Int_t nchnl,Int_t nbd)
 {
           //Int_t nchnl = o.fadc_number;
 	  Int_t index = fadc[bn].channel_data[nchnl].lastindex;
@@ -126,7 +126,7 @@ void FillTree(fadc_board_t *fadc,TTree *t,Int_t bn,Int_t nchnl)
 	      fadc_event.adc[k] = fadc[bn].channel_data[nchnl].data[k];
 	  
 	  fadc_event.first_time = fadc[bn].channel_data[nchnl].ft;
-	  fadc_event.board      = o.board_number;
+	  fadc_event.board      = nbd;
 	  fadc_event.max        = fadc[bn].channel_data[nchnl].mx;
 	  fadc_event.min        = fadc[bn].channel_data[nchnl].mx;
 	  fadc_event.channel    = (UShort_t)nchnl;
@@ -216,7 +216,7 @@ void initialize_fadc_data(fadc_board_t *fadc,Int_t nboards,Bool_t FIRST)
 	    if(FIRST){
 	      // if this is the first packet read from the file reset the current timestamp and cycle counters
 	      // to initial values of -21 and 0.
-	      fadc[i].channel_data[j].curr    = -21;
+	      fadc[i].channel_data[j].curr    = -21; 
 	      fadc[i].channel_data[j].cycle   = 0;
 	    }
 	    fadc[i].channel_data[j].mx        = 0; // Set the max value to 0 for future comparison
@@ -232,9 +232,7 @@ void process_file(char *flnm,TString dir_save)
   using namespace std;
   // Struct to hold tree data
   Fadc_Event fadc_event;
-  
-  TString dir_input("/media/Data3/WNR_DATA/WNR/WNR-MIDAS_RUN/raw_data");
-  
+  TString dir_input(getenv("WNR_RAW_DATA")); 
   FILE *inf = fopen(dir_input + "/" + flnm, "rb");
   FILE *tsrec = fopen(dir_save + "/" + TString(flnm).ReplaceAll(".fat","") + "ts.txt","w");
 
@@ -324,8 +322,9 @@ void process_file(char *flnm,TString dir_save)
 	Set_Sample_Data(fadc,o,blck,bn,false,true);
       } else {
 	// Fill tree data struct..................................................................
-	  FillTree(fadc,t,bn);
+	  FillTree(fadc,fadc_event,t,bn,o.fadc_number,o.board_number);
 	  // increase the cycle number if the current timestamp exceeds the block timestamp
+	  Int_t nchnl = o.fadc_number;
 	  if (fadc[bn].channel_data[nchnl].curr > blck.timestamp) {
 	    fadc[bn].channel_data[nchnl].cycle++;
 	    fprintf(tsrec,"Old Timestamp = %u, New Timestamp = %lli, cycle = %u, Channel = %d\n",fadc[bn].channel_data[nchnl].curr,

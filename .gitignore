@@ -1,2 +1,5 @@
 na
 *.o
+*.*~
+#*#
+wave_form_viewer
