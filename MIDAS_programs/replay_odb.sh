@@ -13,7 +13,7 @@ odbedit -e Default -c 'save current.odb'
 
 for (( i=0; i<700; i++ ))
 do
-  ODBFILE=/media/Data2/WNR/WNR-MIDAS_RUN/run00$(($i)).odb
+  ODBFILE=$WNR_ODB_DIR/run00$(($i)).odb
   if [ -f $ODBFILE ]
   then
   echo "loading file $ODBFILE"
