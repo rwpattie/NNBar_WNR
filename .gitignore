@@ -4,3 +4,6 @@ na
 #*#
 wave_form_viewer
 *.out
+analysis_tools/fission_foil.pdf
+analysis_tools/fission_foil
+analysis_tools/fission_foil_analyzer

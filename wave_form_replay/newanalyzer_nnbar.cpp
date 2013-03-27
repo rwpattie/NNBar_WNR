@@ -257,7 +257,7 @@ void process_file(char *flnm,TString dir_save)
   Int_t sample = 8;
   //---------------------------------------------------------------------------------------
   // create an output tree..............
-  TTree *t = new TTree("t","data");
+  TTree *t = new TTree("t","t");
   t->Branch("first_time",&fadc_event.first_time,"first_time/l");
   t->Branch("board",&fadc_event.board,"board/I");
   t->Branch("last",&fadc_event.last,"last/s");
@@ -267,13 +267,14 @@ void process_file(char *flnm,TString dir_save)
   t->Branch("zero",&fadc_event.zero,"zero/s");
   t->Branch("ped",&fadc_event.ped,"ped/s");
   t->Branch("channel",&fadc_event.channel,"channel/s");
+  //--------------------------------------------------------------------------------------
   // loop through the raw data file
   while(!feof(inf)) {
     // read the header of the current event.
     fread(&o, sizeof(o), 1, inf);
-    /*printf("Here's a bunch of shit:\n");
+    printf("Here's a bunch of shit:\n");
     printf("board_number = %d, packet serial = %d\n",o.board_number,o.packet_serial);
-    printf("fadc number = %d, data size = %d\n",o.fadc_number,o.data_size);*/
+    printf("fadc number = %d, data size = %d\n",o.fadc_number,o.data_size);
     //if(o.data_size <= 0) continue;
     Bool_t bnfound = false; // logical variable to check if a board is found.
     UShort_t bn    = 0;

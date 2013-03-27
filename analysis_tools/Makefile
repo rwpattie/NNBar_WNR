@@ -17,7 +17,7 @@ MYOS := $(subst -,,$(shell uname))
 # Linux with egcs       
 
         CXX           = gcc
-        CXXFLAGS      = -O3 -Wall -fPIC -g
+        CXXFLAGS      = -O3 -Wall -fPIC -g -Wl,--no-as-needed
         LD            = gcc
         LDFLAGS       = -g
         SOFLAGS       = -shared
