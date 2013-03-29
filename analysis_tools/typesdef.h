@@ -3,6 +3,7 @@
 
 struct Fadc_Event {
   ULong64_t first_time;
+  ULong64_t global_time;
   Int_t board;
   UShort_t last;
   UShort_t adc[5000];

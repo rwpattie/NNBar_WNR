@@ -20,15 +20,19 @@
 // Define Data Structures-----------------------------------------------------------------
 
 struct Fadc_Event {
-  ULong64_t first_time;
-  Int_t board;
-  UShort_t last;
-  UShort_t adc[5000];
-  UShort_t max;
-  UShort_t min;
-  UShort_t zero;
-  UShort_t ped;
-  UShort_t channel;
+  ULong64_t first_time;  
+  ULong64_t global_time;
+  Int_t     packet_time_s;
+  Int_t     packet_time_us;
+  Int_t     packet_time_l;
+  Int_t     board;
+  UShort_t  last;
+  UShort_t  adc[5000];
+  UShort_t  max;
+  UShort_t  min;
+  UShort_t  zero;
+  UShort_t  ped;
+  UShort_t  channel;
 };
 
 struct output_header{
@@ -57,6 +61,10 @@ struct fadc_channel_data_t {
     UShort_t mx;
     UShort_t lastindex;
     Long64_t ft;
+    Long64_t glt;
+    Int_t    time_s;
+    Int_t    time_us;
+    Int_t    time_local;
     UInt_t   curr;
     UInt_t   cycle;
 };
@@ -74,10 +82,12 @@ void Set_Sample_Data(fadc_board_t *fadc,output_header o,Data_Block_t blck,UShort
 void initialize_fadc_data(fadc_board_t *fadc,Int_t nboards,Bool_t FIRST);
 void process_file(char *flnm,TString dir_save);
 void FillTree(fadc_board_t *fadc,Fadc_Event &fadc_event,TTree *t,Int_t bn,Int_t nchnl,Int_t nbd);
+void SetBranches(TTree *tree,Fadc_Event fadc_event);
 //-------------------------------------------------------------------------------------------
 // Define a set of global variables 
-ULong64_t cycleoffset = 0;//pow(2,28);  // Represents the maximum time measured by the 28-bit timestamp
-UShort_t boardnum[3]={1,64,0};//active board numbers as set by the hardware switch...
+ULong64_t cycleoffset = pow(2,28);  // Represents the maximum time measured by the 28-bit timestamp
+UShort_t boardnum[3]={1,64,0};      // active board numbers as set by the hardware switch...
+Int_t initial_time = 0;
 //---------------------------------------------------------------------------------------
 int main (int argc, char *argv[]) {
 	
@@ -124,12 +134,16 @@ void FillTree(fadc_board_t *fadc,Fadc_Event &fadc_event,TTree *t,Int_t bn,Int_t 
 	    if(k < index)
 	      fadc_event.adc[k] = fadc[bn].channel_data[nchnl].data[k];
 	  
-	  fadc_event.first_time = fadc[bn].channel_data[nchnl].ft;
-	  fadc_event.board      = nbd;
-	  fadc_event.max        = fadc[bn].channel_data[nchnl].mx;
-	  fadc_event.min        = fadc[bn].channel_data[nchnl].mx;
-	  fadc_event.channel    = (UShort_t)nchnl;
-	  fadc_event.last       = index;
+	  fadc_event.first_time     = fadc[bn].channel_data[nchnl].ft;
+	  fadc_event.board          = nbd;
+	  fadc_event.max            = fadc[bn].channel_data[nchnl].mx;
+	  fadc_event.min            = fadc[bn].channel_data[nchnl].mx;
+	  fadc_event.channel        = (UShort_t)nchnl;
+	  fadc_event.last           = index;
+	  fadc_event.global_time    = fadc[bn].channel_data[nchnl].glt;
+	  fadc_event.packet_time_s  = fadc[bn].channel_data[nchnl].time_s;
+	  fadc_event.packet_time_us = fadc[bn].channel_data[nchnl].time_us;
+	  fadc_event.packet_time_l  = fadc[bn].channel_data[nchnl].time_local;
 	  
 	  if (index > 0 ){
 	    UShort_t mean = 0;
@@ -190,6 +204,7 @@ void Set_Sample_Data(fadc_board_t *fadc,output_header o,Data_Block_t blck,UShort
       Int_t index  = fadc[bn].channel_data[o.fadc_number].lastindex;
       Int_t nchnl  = o.fadc_number;
       Int_t ncycle = fadc[bn].channel_data[nchnl].cycle;
+      if(initial_time == 0) initial_time = o.tv_sec;
       //---------------------------------------------------------------------------------
       for(Int_t ii = 0 ; ii < 4 ; ii++){
 	//loop over the 4 samples in the packet setting the fadc.channel_data.data[nsample] variable
@@ -204,9 +219,20 @@ void Set_Sample_Data(fadc_board_t *fadc,output_header o,Data_Block_t blck,UShort
       // Set the last index
       fadc[bn].channel_data[nchnl].lastindex += 4;
       // if the first packet set the first time variable
-      if(FIRST)fadc[bn].channel_data[nchnl].ft = blck.timestamp + (cycleoffset * ncycle);
+      if(FIRST){
+	  fadc[bn].channel_data[nchnl].ft         = blck.timestamp; 
+	  fadc[bn].channel_data[nchnl].glt        = blck.timestamp + (cycleoffset * ncycle);
+	  fadc[bn].channel_data[nchnl].time_s     = o.tv_sec;
+	  fadc[bn].channel_data[nchnl].time_us    = o.tv_usec;
+	  fadc[bn].channel_data[nchnl].time_local = o.tv_sec - initial_time;
+      }
       // if the clock has looped incriment the cycle counter.
       if(INCRCYCLE)fadc[bn].channel_data[nchnl].cycle++;
+}
+//------------------------------------------------------------------------------------------------------
+void SetBranches(TTree *tree,Fadc_Event fadc_event)
+{
+  
 }
 //----------------------------------------------------------------------------------------------------
 void initialize_fadc_data(fadc_board_t *fadc,Int_t nboards,Bool_t FIRST)
@@ -255,12 +281,17 @@ void process_file(char *flnm,TString dir_save)
   UChar_t raw[RAWDATA_LENGTH];
   
   Int_t lastser[3] = {-1,-1,-1};
-  Int_t threshold[8] = {700,700,700,700,700,700,700,700};
+  Int_t threshold[8] = {700,700,700,700,700,700,700,700}; // Needs to replaced with a routine to get the 
+							  // threshold from the odb or mysql db.....
   Int_t sample = 8;
   //---------------------------------------------------------------------------------------
   // create an output tree..............
   TTree *t = new TTree("t","t");
+  //SetBranches(t,fadc_event);
   t->Branch("first_time",&fadc_event.first_time,"first_time/l");
+  t->Branch("global_time",&fadc_event.global_time,"global_time/l");
+  t->Branch("packet_time_s",&fadc_event.packet_time_s,"packet_time_s/I");
+  t->Branch("packet_time_us",&fadc_event.packet_time_us,"packet_time_us/I");
   t->Branch("board",&fadc_event.board,"board/I");
   t->Branch("last",&fadc_event.last,"last/s");
   t->Branch("adc",fadc_event.adc,"adc[last]/s");

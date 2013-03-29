@@ -12,14 +12,15 @@
 
 struct fadc_e {
   ULong64_t first_time;
-  Int_t board;
-  UShort_t last;
-  UShort_t adc[5000];
-  UShort_t max;
-  UShort_t min;
-  UShort_t zero;
-  UShort_t ped;
-  UShort_t channel;
+  ULong64_t global_time;
+  Int_t     board;
+  UShort_t  last;
+  UShort_t  adc[5000];
+  UShort_t  max;
+  UShort_t  min;
+  UShort_t  zero;
+  UShort_t  ped;
+  UShort_t  channel;
 };
 
 int main(int argc,char *argv[])
@@ -71,7 +72,7 @@ int main(int argc,char *argv[])
     tr->GetEntry(nentry);
     cout << "Looping through waveform" << endl;
     //if(event.channel == 0){
-      if(((int)event.channel == chan || chan == -1) && event.last >10){
+      if(((int)event.channel == chan || chan == -1) && event.last >0){
       for(Int_t i = 0 ; i < 5000 ; i++){
 	if(i < event.last ){
 	  Double_t adcvalue = (event.adc[i] < 4000) ? event.adc[i] : 0;
