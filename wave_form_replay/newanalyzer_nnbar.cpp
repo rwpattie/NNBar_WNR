@@ -70,7 +70,7 @@ void process_file(char *flnm,TString dir_save);
 void Check_Serial(Int_t *lastser,output_header o,Int_t bn);
 Data_Block_t Fill_Data_Blck(UChar_t raw[RAWDATA_LENGTH],Int_t i);
 UShort_t Get_Zero(UShort_t *data,Int_t index);
-void Set_Sample_Data(fadc_board_t *fadc,output_header o,Data_Block_t blck,UShort_t bn,Bool_t FIRST,Bool_t INCRCYCLE);
+void Set_Sample_Data(fadc_board_t *fadc,output_header o,Data_Block_t blck,UShort_t bn,Bool_t FIRST,Bool_t INCRCYCLE,Long64_t nfrm);
 void initialize_fadc_data(fadc_board_t *fadc,Int_t nboards,Bool_t FIRST);
 void process_file(char *flnm,TString dir_save);
 void FillTree(fadc_board_t *fadc,Fadc_Event &fadc_event,TTree *t,Int_t bn,Int_t nchnl,Int_t nbd);
@@ -183,7 +183,8 @@ UShort_t Get_Zero(UShort_t *data,Int_t index)
     return sum / index;
 }
 //================================================================================================================
-void Set_Sample_Data(fadc_board_t *fadc,output_header o,Data_Block_t blck,UShort_t bn,Bool_t FIRST,Bool_t INCRCYCLE)
+void Set_Sample_Data(fadc_board_t *fadc,output_header o,Data_Block_t blck,UShort_t bn,Bool_t FIRST,Bool_t INCRCYCLE,
+		     Long64_t nfrm)
 {
       // Get the last index and channel number and save them to local variables
       Int_t index  = fadc[bn].channel_data[o.fadc_number].lastindex;
@@ -203,7 +204,7 @@ void Set_Sample_Data(fadc_board_t *fadc,output_header o,Data_Block_t blck,UShort
       // Set the last index
       fadc[bn].channel_data[nchnl].lastindex += 4;
       // if the first packet set the first time variable
-      if(FIRST)fadc[bn].channel_data[nchnl].ft = blck.timestamp + cycleoffset * ncycle;
+      if(FIRST)fadc[bn].channel_data[nchnl].ft = blck.timestamp + (cycleoffset * ncycle);
       // if the clock has looped incriment the cycle counter.
       if(INCRCYCLE)fadc[bn].channel_data[nchnl].cycle++;
 }
@@ -254,6 +255,7 @@ void process_file(char *flnm,TString dir_save)
   UChar_t raw[RAWDATA_LENGTH];
   
   Int_t lastser[3] = {-1,-1,-1};
+  Int_t threshold[8] = {700,700,700,700,700,700,700,700};
   Int_t sample = 8;
   //---------------------------------------------------------------------------------------
   // create an output tree..............
@@ -269,6 +271,7 @@ void process_file(char *flnm,TString dir_save)
   t->Branch("channel",&fadc_event.channel,"channel/s");
   //--------------------------------------------------------------------------------------
   // loop through the raw data file
+  Long64_t nframe = 0;
   while(!feof(inf)) {
     // read the header of the current event.
     fread(&o, sizeof(o), 1, inf);
@@ -316,20 +319,24 @@ void process_file(char *flnm,TString dir_save)
       if (fadc[bn].channel_data[o.fadc_number].curr == -21) {
       // ........................................................................................
       // Looks for first packet 
-	Set_Sample_Data(fadc,o,blck,bn,true,false);
-      } else if ( fadc[bn].channel_data[o.fadc_number].curr == blck.timestamp - 1) {
+	Set_Sample_Data(fadc,o,blck,bn,true,false,nframe);
+      } else if ( fadc[bn].channel_data[o.fadc_number].curr == blck.timestamp - 1 || blck.timestamp == 0) {
 	// I guess this is just some intermediate packet...
 	// the logical statement looks like if curr is 1 less than the packet timestamp then 
 	// this is just a sequential packet.
-	Set_Sample_Data(fadc,o,blck,bn,false,false);
+	Set_Sample_Data(fadc,o,blck,bn,false,false,nframe);
       } else if ( fadc[bn].channel_data[o.fadc_number].curr == blck.timestamp + cycleoffset - 1) {
 	// output warning message
 	fprintf(tsrec,"Old Timestamp = %u, New Timestamp = %lli, cycle = %u, Channel = %d\n",
 		fadc[bn].channel_data[o.fadc_number].curr,blck.timestamp,
-	        fadc[bn].channel_data[o.fadc_number].cycle-1,o.fadc_number);
-	Set_Sample_Data(fadc,o,blck,bn,false,true);
+		fadc[bn].channel_data[o.fadc_number].cycle-1,o.fadc_number);
+	Set_Sample_Data(fadc,o,blck,bn,false,true,nframe);
+
+	
       } else {
-	// Fill tree data struct..................................................................
+	
+	 // Fill tree data struct..................................................................
+	
 	  FillTree(fadc,fadc_event,t,bn,o.fadc_number,o.board_number);
 	  // increase the cycle number if the current timestamp exceeds the block timestamp
 	  Int_t nchnl = o.fadc_number;
@@ -339,7 +346,8 @@ void process_file(char *flnm,TString dir_save)
 		    blck.timestamp,fadc[bn].channel_data[nchnl].cycle-1,nchnl);
 	  }
 	  initialize_fadc_data(fadc,3,false);
-	  Set_Sample_Data(fadc,o,blck,bn,true,false);
+	  nframe = 0;
+	  Set_Sample_Data(fadc,o,blck,bn,true,false,nframe);
 	}
      }
   }

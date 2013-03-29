@@ -35,12 +35,21 @@ int main(int argc,char *argv[])
     return -1;
   }
   int nrun = atoi(argv[1]);
-  TFile *file = new TFile(Form("/media/Data3/WNR_DATA/WNR/WNR-MIDAS_RUN/analyzed_runs/run00%dNA.root",nrun),"READ");
+  TFile *file = new TFile(Form("%s/run00%dNA.root",getenv("WNR_OUTPUT_DATA"),nrun),"READ");
   TTree *tr   = (TTree*)file->Get("t");
    
   std::vector<Double_t> time,fadc;
   fadc_e event;
-  tr->SetBranchAddress("fadc_event",&event.first_time);
+  tr->SetBranchAddress("first_time",&event.first_time);
+  tr->SetBranchAddress("board",&event.board);
+  tr->SetBranchAddress("last",&event.last);
+  tr->SetBranchAddress("adc",event.adc);
+  tr->SetBranchAddress("max",&event.max);
+  tr->SetBranchAddress("min",&event.min);
+  tr->SetBranchAddress("zero",&event.zero);
+  tr->SetBranchAddress("ped",&event.ped);
+  tr->SetBranchAddress("channel",&event.channel);
+ // tr->SetBranchAddress("fadc_event",&event.first_time);
   // TGraph gr;
   Int_t nevents = (Int_t)tr->GetEntries();
   TCanvas *c1 = new TCanvas("c1","c1");
@@ -62,7 +71,7 @@ int main(int argc,char *argv[])
     tr->GetEntry(nentry);
     cout << "Looping through waveform" << endl;
     //if(event.channel == 0){
-      if((int)event.channel == chan || chan == -1){
+      if(((int)event.channel == chan || chan == -1) && event.last >10){
       for(Int_t i = 0 ; i < 5000 ; i++){
 	if(i < event.last ){
 	  Double_t adcvalue = (event.adc[i] < 4000) ? event.adc[i] : 0;
@@ -86,11 +95,13 @@ int main(int argc,char *argv[])
     cout << "Enter event number less than " << nevents << endl;
     cout << "-1 to end or 0 to select next event" << endl;
     cin >> nn;
-    if(nn>0)
+    if(nn > 0)
       nentry = nn;
     else if(nn == 0)
       nentry++;
-    } else 
+    else if(nn == -3)
+      c1->Print(Form("waveform_%d_event_%d.pdf",nrun,nentry));
+    }else 
       nentry++;
   }while(nn!=-1 && nentry < nevents);
   
