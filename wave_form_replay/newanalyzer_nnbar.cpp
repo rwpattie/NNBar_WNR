@@ -292,6 +292,7 @@ void process_file(char *flnm,TString dir_save)
   t->Branch("global_time",&fadc_event.global_time,"global_time/l");
   t->Branch("packet_time_s",&fadc_event.packet_time_s,"packet_time_s/I");
   t->Branch("packet_time_us",&fadc_event.packet_time_us,"packet_time_us/I");
+  t->Branch("packet_time_l",&fadc_event.packet_time_l,"packet_time_l/I");
   t->Branch("board",&fadc_event.board,"board/I");
   t->Branch("last",&fadc_event.last,"last/s");
   t->Branch("adc",fadc_event.adc,"adc[last]/s");
