@@ -9,3 +9,5 @@ analysis_tools/fission_foil
 analysis_tools/fission_foil_analyzer
 *.pdf
 *.ps
+*.odb
+*.sql
