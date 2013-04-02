@@ -29,7 +29,8 @@ struct Fadc_Event {
   Int_t     packet_time_us;
   Int_t     packet_time_l;
   Int_t     board;
-  UShort_t  last;
+  //UShort_t  last;
+  Int_t     last;
   UShort_t  adc[5000];
   UShort_t  max;
   UShort_t  min;
@@ -177,13 +178,12 @@ void FillTree(fadc_board_t *fadc,Fadc_Event &fadc_event,TTree *t,Int_t bn,Int_t 
 	  fadc_event.packet_time_s  = fadc[bn].channel_data[nchnl].time_s;
 	  fadc_event.packet_time_us = fadc[bn].channel_data[nchnl].time_us;
 	  fadc_event.packet_time_l  = fadc[bn].channel_data[nchnl].time_local;
-	  
 	  if (index > 0 ){
 	    UShort_t mean = 0;
 	    if(index > 15){
 	      for(int i = 0 ; i < 15 ; i++)mean += fadc[bn].channel_data[nchnl].data[i];
 	      fadc_event.ped = mean/15.;
-	    } else 
+	    } else
 	       fadc_event.ped = 0;
 	    t->Fill();
 	  }
@@ -328,6 +328,7 @@ void process_file(char *flnm,TString dir_save)
   //---------------------------------------------------------------------------------------
   // create an output tree..............
   TTree *t = new TTree("t","t");
+  fadc_event.last = RAWDATA_LENGTH;
   //SetBranches(t,fadc_event);
   t->Branch("first_time",&fadc_event.first_time,"first_time/l");
   t->Branch("global_time",&fadc_event.global_time,"global_time/l");
@@ -335,13 +336,14 @@ void process_file(char *flnm,TString dir_save)
   t->Branch("packet_time_us",&fadc_event.packet_time_us,"packet_time_us/I");
   t->Branch("packet_time_l",&fadc_event.packet_time_l,"packet_time_l/I");
   t->Branch("board",&fadc_event.board,"board/I");
-  t->Branch("last",&fadc_event.last,"last/s");
+  t->Branch("last",&fadc_event.last,"last/I");// from /s
   t->Branch("adc",fadc_event.adc,"adc[last]/s");
   t->Branch("max",&fadc_event.max,"max/s");
   t->Branch("min",&fadc_event.min,"min/s");
   t->Branch("zero",&fadc_event.zero,"zero/s");
   t->Branch("ped",&fadc_event.ped,"ped/s");
   t->Branch("channel",&fadc_event.channel,"channel/s");
+
   //--------------------------------------------------------------------------------------
   // loop through the raw data file
   Long64_t nframe = 0;
@@ -407,9 +409,9 @@ void process_file(char *flnm,TString dir_save)
 	Set_Sample_Data(fadc,o,blck,bn,false,true,nframe);
 
       } else {
-	
 	 // Fill tree data struct..................................................................
 	  FillTree(fadc,fadc_event,t,bn,o.fadc_number,o.board_number);
+	  return;
 	  // increase the cycle number if the current timestamp exceeds the block timestamp
 	  Int_t nchnl = o.fadc_number;
 	  if (fadc[bn].channel_data[nchnl].curr > blck.timestamp) {
@@ -422,6 +424,7 @@ void process_file(char *flnm,TString dir_save)
 	  initialize_fadc_data(fadc,3,false);
 	  nframe = 0;
 	  Set_Sample_Data(fadc,o,blck,bn,true,false,nframe);
+	  return;
 	}
      }
   }
