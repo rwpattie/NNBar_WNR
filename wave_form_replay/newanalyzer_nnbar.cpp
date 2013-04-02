@@ -163,8 +163,7 @@ void FillTree(fadc_board_t *fadc,Fadc_Event &fadc_event,TTree *t,Int_t bn,Int_t 
 	  
 	  fadc_event.zero = Get_Zero(fadc[bn].channel_data[nchnl].data,index);
 	  
-	  for (Int_t k = 0; k <= 5000; k++)
-	    if(k < index)
+	  for (Int_t k = 0; k < index; k++)
 	      fadc_event.adc[k] = fadc[bn].channel_data[nchnl].data[k];
 	  
 	  fadc_event.first_time     = fadc[bn].channel_data[nchnl].ft;
@@ -312,9 +311,7 @@ void process_file(char *flnm,TString dir_save)
   // An array to hold the board data..
   fadc_board_t fadc[3];
   // set the fadc channel variable to their initial values
-  std::cout << "pre-initialization  " << fadc[0].channel_data[0].curr << std::endl; 
   initialize_fadc_data(fadc,3,kTRUE); 
-  std::cout << "post-initialization " << fadc[0].channel_data[0].curr << std::endl;
   // Create a character array to hold the raw data from the packet.
   UChar_t raw[RAWDATA_LENGTH];
   
@@ -391,7 +388,8 @@ void process_file(char *flnm,TString dir_save)
       // ........................................................................................
       // Looks for first packet 
 	Set_Sample_Data(fadc,o,blck,bn,true,false,nframe);
-      } else if ( fadc[bn].channel_data[o.fadc_number].curr == blck.timestamp - 1) {
+      } else if ( fadc[bn].channel_data[o.fadc_number].curr == blck.timestamp - 1 || 
+	        (blck.timestamp == 0 && blck.sample[0] > threshold[o.fadc_number])) {
 	//if(blck.timestamp < 10)  std::cout << "timestamp is " << blck.timestamp << std::endl;
 	// I guess this is just some intermediate packet...
 	// the logical statement looks like if curr is 1 less than the packet timestamp then 
@@ -405,7 +403,6 @@ void process_file(char *flnm,TString dir_save)
 	Set_Sample_Data(fadc,o,blck,bn,false,true,nframe);
 
       } else {
-	
 	 // Fill tree data struct..................................................................
 	  FillTree(fadc,fadc_event,t,bn,o.fadc_number,o.board_number);
 	  // increase the cycle number if the current timestamp exceeds the block timestamp
