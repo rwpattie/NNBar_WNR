@@ -292,6 +292,7 @@ void process_file(char *flnm,TString dir_save)
   // Struct to hold tree data
   Fadc_Event fadc_event;
   TString dir_input(getenv("WNR_RAW_DATA")); 
+ std:cout << "Trying " << dir_input + "/" + flnm << endl;
   FILE *inf = fopen(dir_input + "/" + flnm, "rb");
   FILE *tsrec = fopen(dir_save + "/" + TString(flnm).ReplaceAll(".fat","") + "ts.txt","w");
   
@@ -320,7 +321,8 @@ void process_file(char *flnm,TString dir_save)
   
   Int_t lastser[3] = {-1,-1,-1};
   std::vector<Int_t> threshold;
-  for(Int_t i = 0 ; i < 8 ; i++)threshold.push_back((Int_t)GetThreshold(nrun,i,0)); // Needs to replaced with a routine to get the 
+  for(Int_t i = 0 ; i < 8 ; i++)threshold.push_back(3600); //reverting
+//for(Int_t i = 0 ; i < 8 ; i++)threshold.push_back((Int_t)GetThreshold(nrun,i,0)); // Needs to replaced with a routine to get the 
 				                        			  // threshold from the odb or mysql db.....
   Int_t sample = 8;
   //---------------------------------------------------------------------------------------
