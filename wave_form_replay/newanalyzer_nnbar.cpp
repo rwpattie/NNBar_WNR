@@ -83,7 +83,7 @@ void Check_Serial(Int_t *lastser,output_header o,Int_t bn);
 Data_Block_t Fill_Data_Blck(UChar_t raw[RAWDATA_LENGTH],Int_t i);
 UShort_t Get_Zero(UShort_t *data,Int_t index);
 void Set_Sample_Data(fadc_board_t *fadc,output_header o,Data_Block_t blck,UShort_t bn,Bool_t FIRST,Bool_t INCRCYCLE,Long64_t nfrm);
-void initialize_fadc_data(fadc_board_t fadc,Int_t nboards,Bool_t FIRST);
+void initialize_fadc_data(fadc_board_t fadc,Int_t nboards,Bool_t FIRST,Int_t nch);
 void process_file(char *flnm,TString dir_save);
 void FillTree(fadc_board_t *fadc,Fadc_Event &fadc_event,TTree *t,Int_t bn,Int_t nchnl,Int_t nbd);
 void SetBranches(TTree *tree,Fadc_Event fadc_event);
@@ -163,8 +163,10 @@ void FillTree(fadc_board_t *fadc,Fadc_Event &fadc_event,TTree *t,Int_t bn,Int_t 
 	  
 	  fadc_event.zero = Get_Zero(fadc[bn].channel_data[nchnl].data,index);
 	  
-	  for (Int_t k = 0; k < index; k++)
+	  for (Int_t k = 0; k < index; k++){
 	      fadc_event.adc[k] = fadc[bn].channel_data[nchnl].data[k];
+	      //if(nchnl ==7) std::cout << k << "\t" << fadc_event.adc[k] <<  std::endl;
+	  }
 	  
 	  fadc_event.first_time     = fadc[bn].channel_data[nchnl].ft;
 	  fadc_event.board          = nbd;
@@ -267,9 +269,10 @@ void SetBranches(TTree *tree,Fadc_Event fadc_event)
   
 }
 //----------------------------------------------------------------------------------------------------
-void initialize_fadc_data(fadc_board_t *fadc,Int_t nboards,Bool_t FIRST)
+void initialize_fadc_data(fadc_board_t *fadc,Int_t nboards,Bool_t FIRST,Int_t nch)
 {
     for(Int_t i = 0 ; i < nboards ; i++ ){
+      if(FIRST){
 	for(Int_t j = 0 ; j < 8 ; j++ ){
 	    if(FIRST){
 	      // if this is the first packet read from the file reset the current timestamp and cycle counters
@@ -281,6 +284,11 @@ void initialize_fadc_data(fadc_board_t *fadc,Int_t nboards,Bool_t FIRST)
 	    fadc[i].channel_data[j].mn        = 4096; // Set the min value to 4096 for future comparison
 	    fadc[i].channel_data[j].lastindex = 0; // Reset the index of the last element.
 	}
+      } else {
+	    fadc[i].channel_data[nch].mx        = 0; // Set the max value to 0 for future comparison
+	    fadc[i].channel_data[nch].mn        = 4096; // Set the min value to 4096 for future comparison
+	    fadc[i].channel_data[nch].lastindex = 0; // Reset the index of the last element.
+      }
     }
 }
 //-----------------------------------------------------------------------------
@@ -311,7 +319,7 @@ void process_file(char *flnm,TString dir_save)
   // An array to hold the board data..
   fadc_board_t fadc[3];
   // set the fadc channel variable to their initial values
-  initialize_fadc_data(fadc,3,kTRUE); 
+  initialize_fadc_data(fadc,3,true,-1); 
   // Create a character array to hold the raw data from the packet.
   UChar_t raw[RAWDATA_LENGTH];
   
@@ -340,6 +348,7 @@ void process_file(char *flnm,TString dir_save)
   //--------------------------------------------------------------------------------------
   // loop through the raw data file
   Long64_t nframe = 0;
+  Int_t nevent = 0;
   while(!feof(inf)) {
     // read the header of the current event.
     fread(&o, sizeof(o), 1, inf);
@@ -377,20 +386,17 @@ void process_file(char *flnm,TString dir_save)
       printf("Board number does not match record.\n");
       continue;
     }
-			
     Int_t num_words = o.data_size/10;
+    //if(o.fadc_number == 7){
     for (Int_t j = 0; j < num_words; j++) {
       // ..........................................................................................
       // if the current block of data input the blck struct
       Data_Block_t blck = Fill_Data_Blck(raw,j);
       // parse the fadc data.......................................................................
       if (fadc[bn].channel_data[o.fadc_number].curr == -21) {
-      // ........................................................................................
-      // Looks for first packet 
+      // Looks for first packet in the file.......
 	Set_Sample_Data(fadc,o,blck,bn,true,false,nframe);
-      } else if ( fadc[bn].channel_data[o.fadc_number].curr == blck.timestamp - 1 || 
-	        (blck.timestamp == 0 && blck.sample[0] > threshold[o.fadc_number])) {
-	//if(blck.timestamp < 10)  std::cout << "timestamp is " << blck.timestamp << std::endl;
+      } else if ( fadc[bn].channel_data[o.fadc_number].curr == blck.timestamp - 1 ) {
 	// I guess this is just some intermediate packet...
 	// the logical statement looks like if curr is 1 less than the packet timestamp then 
 	// this is just a sequential packet.
@@ -401,23 +407,24 @@ void process_file(char *flnm,TString dir_save)
 		fadc[bn].channel_data[o.fadc_number].curr,blck.timestamp,
 		fadc[bn].channel_data[o.fadc_number].cycle-1,o.fadc_number);
 	Set_Sample_Data(fadc,o,blck,bn,false,true,nframe);
-
-      } else {
+      } else if(blck.timestamp == 0){
+		Set_Sample_Data(fadc,o,blck,bn,false,true,nframe);
+      }else { 
 	 // Fill tree data struct..................................................................
 	  FillTree(fadc,fadc_event,t,bn,o.fadc_number,o.board_number);
+	  nevent++;
 	  // increase the cycle number if the current timestamp exceeds the block timestamp
 	  Int_t nchnl = o.fadc_number;
 	  if (fadc[bn].channel_data[nchnl].curr > blck.timestamp) {
 	    fadc[bn].channel_data[nchnl].cycle++;
 	    fprintf(tsrec,"Old Timestamp = %u, New Timestamp = %lli, cycle = %u, Channel = %d\n",fadc[bn].channel_data[nchnl].curr,
 		    blck.timestamp,fadc[bn].channel_data[nchnl].cycle-1,nchnl);
-	     if(fadc[bn].channel_data[o.fadc_number].curr == blck.timestamp) std::cout << "Timestamps equal ??? " << std::endl;
-	    
 	  }
-	  initialize_fadc_data(fadc,3,false);
+	  initialize_fadc_data(fadc,3,false,o.fadc_number);
 	  nframe = 0;
 	  Set_Sample_Data(fadc,o,blck,bn,true,false,nframe);
 	}
+    //}
      }
   }
   fclose(inf);
