@@ -5,6 +5,10 @@
 #include <TROOT.h>
 #include <TObject.h>
 #include <TApplication.h>
+#include <TSQLServer.h>
+#include <TLine.h>
+#include <TSQLRow.h>
+#include <TSQLResult.h>
 
 #include "stdlib.h"
 #include "stdio.h"
@@ -22,6 +26,37 @@ struct fadc_e {
   UShort_t  ped;
   UShort_t  channel;
 };
+
+using namespace std;
+
+Double_t GetThreshold(Int_t nrun, Int_t nchn)
+{
+  
+  TSQLResult *res;
+  TSQLRow    *row;
+  Double_t thresh=0;
+  
+  if(nchn < 0 || nchn > 7){
+      cout << "Channel " << nchn << " is not valid !!!! " << endl;
+      return -1;
+  }
+  
+  TSQLServer *sql = TSQLServer::Connect("mysql://localhost/wnr_run_info",
+					getenv("UCNADBUSER"),getenv("UCNADBPASS"));
+  
+  char query[500];
+  sprintf(query,"select upper_threshold from channel_info where run_number = %d and channel = %d",
+	  nrun,nchn);
+  
+  res = (TSQLResult*)sql->Query(query);
+  if(res->GetRowCount() != 0){
+      while((row = (TSQLRow*)res->Next())){
+	  thresh = (Double_t)atof(row->GetField(0));
+      }
+  }
+  
+  return thresh; 
+}
 
 int main(int argc,char *argv[])
 {
@@ -50,8 +85,7 @@ int main(int argc,char *argv[])
   tr->SetBranchAddress("zero",&event.zero);
   tr->SetBranchAddress("ped",&event.ped);
   tr->SetBranchAddress("channel",&event.channel);
- // tr->SetBranchAddress("fadc_event",&event.first_time);
-  // TGraph gr;
+  
   Int_t nevents = (Int_t)tr->GetEntries();
   TCanvas *c1 = new TCanvas("c1","c1");
   c1->cd();
@@ -62,7 +96,14 @@ int main(int argc,char *argv[])
   Int_t chan = 0;
   cout << "Enter Channel Number or -1 for all channels : " << endl;
   cin >> chan;
-
+  
+  TLine *thr = new TLine(0,1,0,1);
+  thr->SetLineColor(1);
+  thr->SetLineStyle(2);
+  Double_t threshold = GetThreshold(nrun,chan);
+  thr->SetY1(threshold);
+  thr->SetY2(threshold);
+  
   do{
 
     c1->Clear();
@@ -71,8 +112,8 @@ int main(int argc,char *argv[])
     
     tr->GetEntry(nentry);
     cout << "Looping through waveform" << endl;
-    //if(event.channel == 0){
-      if(((int)event.channel == chan || chan == -1) && event.last >0){
+   
+    if(((int)event.channel == chan || chan == -1) && event.last >0){
       for(Int_t i = 0 ; i < 5000 ; i++){
 	if(i < event.last ){
 	  Double_t adcvalue = (event.adc[i] < 4000) ? event.adc[i] : 0;
@@ -80,9 +121,11 @@ int main(int argc,char *argv[])
 	  time.push_back((Double_t)(event.first_time*16.0e-9 + (Double_t)i*4.0e-9));
 	  cout  << "time stamp " << i << "\t" << event.first_time*16.0e-9 + i*4e-9 << "\t" << event.adc[i] << "\t" << event.last << endl;
 	} 
-      }
+    }
+    
+    thr->SetX1(time[0]);
+    thr->SetX2(time[(Int_t)time.size()-1]);
       
-    //}
     TGraph gr((Int_t)time.size() -1 , &time[0] , &fadc[0]);
     gr.SetTitle(Form("Run : %d Waveform Traces for Board:Channel %d:%d",nrun,event.board,event.channel));
    // gr.GetXaxis().SetTitle("Time [ns]");
@@ -90,6 +133,7 @@ int main(int argc,char *argv[])
     gr.SetMarkerColor(2);
     gr.SetLineColor(2);
     gr.Draw("apl");
+    thr->Draw("same");
     c1->Update();
     gPad->Update();
     nn=0;
@@ -105,10 +149,6 @@ int main(int argc,char *argv[])
     }else 
       nentry++;
   }while(nn!=-1 && nentry < nevents);
-  
-  TH1F *hAveWave[24];
-  
-  
   
   file->Close();
 

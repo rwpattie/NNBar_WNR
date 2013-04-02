@@ -11,3 +11,4 @@ analysis_tools/fission_foil_analyzer
 *.ps
 *.odb
 *.sql
+*.eps
