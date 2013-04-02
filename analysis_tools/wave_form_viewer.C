@@ -29,7 +29,7 @@ struct fadc_e {
 
 using namespace std;
 
-Double_t GetThreshold(Int_t nrun, Int_t nchn)
+Double_t GetThreshold(Int_t nrun, Int_t nchn,Int_t nthrsh)
 {
   
   TSQLResult *res;
@@ -45,13 +45,13 @@ Double_t GetThreshold(Int_t nrun, Int_t nchn)
 					getenv("UCNADBUSER"),getenv("UCNADBPASS"));
   
   char query[500];
-  sprintf(query,"select upper_threshold from channel_info where run_number = %d and channel = %d",
+  sprintf(query,"select upper_threshold,lower_threshold from channel_info where run_number = %d and channel = %d",
 	  nrun,nchn);
   
   res = (TSQLResult*)sql->Query(query);
   if(res->GetRowCount() != 0){
       while((row = (TSQLRow*)res->Next())){
-	  thresh = (Double_t)atof(row->GetField(0));
+	  thresh = (Double_t)atof(row->GetField(nthrsh));
       }
   }
   
@@ -98,11 +98,22 @@ int main(int argc,char *argv[])
   cin >> chan;
   
   TLine *thr = new TLine(0,1,0,1);
+  TLine *lthr = new TLine(0,1,0,1);
   thr->SetLineColor(1);
   thr->SetLineStyle(2);
-  Double_t threshold = GetThreshold(nrun,chan);
-  thr->SetY1(threshold);
-  thr->SetY2(threshold);
+  lthr->SetLineColor(1);
+  lthr->SetLineStyle(2);
+  
+  std::vector<Double_t> uthreshold,lthreshold;
+  for(Int_t i = 0 ; i < 8 ; i++)uthreshold.push_back(GetThreshold(nrun,i,0));
+  for(Int_t i = 0 ; i < 8 ; i++)lthreshold.push_back(GetThreshold(nrun,i,1));
+  
+  if(chan >-1 && chan < 8){
+    thr->SetY1(uthreshold[chan]);
+    thr->SetY2(uthreshold[chan]);
+    lthr->SetY1(lthreshold[chan]);
+    lthr->SetY2(lthreshold[chan]);
+  }
   
   do{
 
@@ -116,7 +127,7 @@ int main(int argc,char *argv[])
     if(((int)event.channel == chan || chan == -1) && event.last >0){
       for(Int_t i = 0 ; i < 5000 ; i++){
 	if(i < event.last ){
-	  Double_t adcvalue = (event.adc[i] < 4000) ? event.adc[i] : 0;
+	  Double_t adcvalue = (event.adc[i] < 4096) ? event.adc[i] : 4096;
 	  fadc.push_back(adcvalue);
 	  time.push_back((Double_t)(event.first_time*16.0e-9 + (Double_t)i*4.0e-9));
 	  cout  << "time stamp " << i << "\t" << event.first_time*16.0e-9 + i*4e-9 << "\t" << event.adc[i] << "\t" << event.last << endl;
@@ -125,15 +136,22 @@ int main(int argc,char *argv[])
     
     thr->SetX1(time[0]);
     thr->SetX2(time[(Int_t)time.size()-1]);
+    lthr->SetX1(time[0]);
+    lthr->SetX2(time[(Int_t)time.size()-1]);
+    if(chan<0){
+      thr->SetY1(uthreshold[chan]);
+      thr->SetY2(uthreshold[chan]);
+      lthr->SetY1(lthreshold[chan]);
+      lthr->SetY2(lthreshold[chan]);
+    }
       
     TGraph gr((Int_t)time.size() -1 , &time[0] , &fadc[0]);
     gr.SetTitle(Form("Run : %d Waveform Traces for Board:Channel %d:%d",nrun,event.board,event.channel));
-   // gr.GetXaxis().SetTitle("Time [ns]");
-   // gr.GetYaxis().SetTitle("ADC Channel");
     gr.SetMarkerColor(2);
     gr.SetLineColor(2);
     gr.Draw("apl");
     thr->Draw("same");
+    lthr->Draw("same");
     c1->Update();
     gPad->Update();
     nn=0;

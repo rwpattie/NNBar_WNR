@@ -47,18 +47,18 @@ int main(int argc,char *argv[])
    tr->SetBranchAddress("ped",&event.ped);
    tr->SetBranchAddress("channel",&event.channel);
    
-   TH1F *hTAC = new TH1F("hTAC","Fission Foil TAC;ADC[chl];Counts",4096,0,4096);
-   TH1F *hPulse = new TH1F("hPulse","First Timestamp from the Fission Foil Wave Form;Time;Counts",2000,0,2);
+   TH1F *hTAC = new TH1F("hTAC","Fission Foil TAC;ADC[chl];Counts",410,0,4100);
+   TH1F *hPulse = new TH1F("hPulse","First Timestamp from the Fission Foil Wave Form;Time;Counts",2000,0,10);
    
    for(Int_t i = 0 ; i < tr->GetEntries() ; i++){
       tr->GetEntry(i);
       if(event.last > 20){
 	
-      if(event.channel == 7){
-	if(event.ped<1000)
-	  hTAC->Fill((Float_t)(event.max-event.ped));
+      if(event.channel == 7 && event.last>4){
+	if(event.ped < 1000)
+	  hTAC->Fill((Float_t)(event.max));
 	else
- 	  hTAC->Fill((Float_t)(event.max-event.ped)); 
+ 	  hTAC->Fill((Float_t)(event.max)); 
       }
       if(event.channel == 6)
 	  hPulse->Fill((Float_t)(event.first_time)*16.e-3);
@@ -68,6 +68,7 @@ int main(int argc,char *argv[])
    c1->Divide(2,1);
    c1->cd(1);
    hTAC->Draw();
+   gPad->SetLogy();
    c1->cd(2);
    hPulse->Draw();
    c1->Print("fission_foil.pdf");

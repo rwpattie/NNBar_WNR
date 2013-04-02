@@ -14,6 +14,9 @@
 #include "TString.h"
 #include "TCanvas.h"
 #include "TTree.h"
+#include "TSQLResult.h"
+#include "TSQLRow.h"
+#include "TSQLServer.h"
 
 #define RAWDATA_LENGTH 2048
 
@@ -65,7 +68,7 @@ struct fadc_channel_data_t {
     Int_t    time_s;
     Int_t    time_us;
     Int_t    time_local;
-    UInt_t   curr;
+    Int_t    curr;
     UInt_t   cycle;
 };
 
@@ -74,12 +77,13 @@ struct fadc_board_t {
 };
 // ---------------------------------------------------------------------------------------
 // Define Function Prototypes
+Double_t GetThreshold(Int_t nrun, Int_t nchn,Int_t nthrsh);
 void process_file(char *flnm,TString dir_save);
 void Check_Serial(Int_t *lastser,output_header o,Int_t bn);
 Data_Block_t Fill_Data_Blck(UChar_t raw[RAWDATA_LENGTH],Int_t i);
 UShort_t Get_Zero(UShort_t *data,Int_t index);
 void Set_Sample_Data(fadc_board_t *fadc,output_header o,Data_Block_t blck,UShort_t bn,Bool_t FIRST,Bool_t INCRCYCLE,Long64_t nfrm);
-void initialize_fadc_data(fadc_board_t *fadc,Int_t nboards,Bool_t FIRST);
+void initialize_fadc_data(fadc_board_t fadc,Int_t nboards,Bool_t FIRST);
 void process_file(char *flnm,TString dir_save);
 void FillTree(fadc_board_t *fadc,Fadc_Event &fadc_event,TTree *t,Int_t bn,Int_t nchnl,Int_t nbd);
 void SetBranches(TTree *tree,Fadc_Event fadc_event);
@@ -107,6 +111,35 @@ int main (int argc, char *argv[]) {
 	
 	return 0;
 }
+//-------------------------------------------------------------------------------------------
+Double_t GetThreshold(Int_t nrun, Int_t nchn,Int_t nthrsh)
+{
+  
+  TSQLResult *res;
+  TSQLRow    *row;
+  Double_t thresh=0;
+  
+  if(nchn < 0 || nchn > 7){
+      std::cout << "Channel " << nchn << " is not valid !!!! " << std::endl;
+      return -1;
+  }
+  
+  TSQLServer *sql = TSQLServer::Connect("mysql://localhost/wnr_run_info",
+					getenv("UCNADBUSER"),getenv("UCNADBPASS"));
+  
+  char query[500];
+  sprintf(query,"select upper_threshold,lower_threshold from channel_info where run_number = %d and channel = %d",
+	  nrun,nchn);
+  
+  res = (TSQLResult*)sql->Query(query);
+  if(res->GetRowCount() != 0){
+      while((row = (TSQLRow*)res->Next())){
+	  thresh = (Double_t)atof(row->GetField(nthrsh));
+      }
+  }
+  
+  return thresh; 
+}
 //--------------------------------------------------------------------------------------
 void Check_Serial(Int_t *lastser,output_header o,Int_t bn)
 {
@@ -116,7 +149,7 @@ void Check_Serial(Int_t *lastser,output_header o,Int_t bn)
 	printf("Looping serials on board #%d.\n", boardnum[bn]);
 	lastser[bn] = o.packet_serial;
       } else if(lastser[bn] != o.packet_serial - 1) {
-	printf("Missing packets between %d and %d.\n",lastser[bn],o.packet_serial);
+	//printf("Missing packets between %d and %d.\n",lastser[bn],o.packet_serial);
 	lastser[bn] = o.packet_serial;
       } else{
 	lastser[bn] = o.packet_serial;
@@ -137,7 +170,7 @@ void FillTree(fadc_board_t *fadc,Fadc_Event &fadc_event,TTree *t,Int_t bn,Int_t 
 	  fadc_event.first_time     = fadc[bn].channel_data[nchnl].ft;
 	  fadc_event.board          = nbd;
 	  fadc_event.max            = fadc[bn].channel_data[nchnl].mx;
-	  fadc_event.min            = fadc[bn].channel_data[nchnl].mx;
+	  fadc_event.min            = fadc[bn].channel_data[nchnl].mn;
 	  fadc_event.channel        = (UShort_t)nchnl;
 	  fadc_event.last           = index;
 	  fadc_event.global_time    = fadc[bn].channel_data[nchnl].glt;
@@ -227,7 +260,7 @@ void Set_Sample_Data(fadc_board_t *fadc,output_header o,Data_Block_t blck,UShort
 	  fadc[bn].channel_data[nchnl].time_local = o.tv_sec - initial_time;
       }
       // if the clock has looped incriment the cycle counter.
-      if(INCRCYCLE)fadc[bn].channel_data[nchnl].cycle++;
+      if(INCRCYCLE || blck.timestamp == 0)fadc[bn].channel_data[nchnl].cycle++;
 }
 //------------------------------------------------------------------------------------------------------
 void SetBranches(TTree *tree,Fadc_Event fadc_event)
@@ -237,8 +270,8 @@ void SetBranches(TTree *tree,Fadc_Event fadc_event)
 //----------------------------------------------------------------------------------------------------
 void initialize_fadc_data(fadc_board_t *fadc,Int_t nboards,Bool_t FIRST)
 {
-    for(Int_t i = 0 ; i < nboards ; i++){
-	for(Int_t j = 0 ; j < 8 ; j++){
+    for(Int_t i = 0 ; i < nboards ; i++ ){
+	for(Int_t j = 0 ; j < 8 ; j++ ){
 	    if(FIRST){
 	      // if this is the first packet read from the file reset the current timestamp and cycle counters
 	      // to initial values of -21 and 0.
@@ -261,7 +294,10 @@ void process_file(char *flnm,TString dir_save)
   TString dir_input(getenv("WNR_RAW_DATA")); 
   FILE *inf = fopen(dir_input + "/" + flnm, "rb");
   FILE *tsrec = fopen(dir_save + "/" + TString(flnm).ReplaceAll(".fat","") + "ts.txt","w");
-
+  
+  char runnumber[5] = {flnm[3],flnm[4],flnm[5],flnm[6],flnm[7]};
+  Int_t nrun = atoi(runnumber);
+  std::cout << "Run number is " << nrun << std::endl;
   if(!tsrec){
     printf("Can't open timestamps file.");
     exit(1);
@@ -276,13 +312,16 @@ void process_file(char *flnm,TString dir_save)
   // An array to hold the board data..
   fadc_board_t fadc[3];
   // set the fadc channel variable to their initial values
-  initialize_fadc_data(fadc,3,true); 
+  std::cout << "pre-initialization  " << fadc[0].channel_data[0].curr << std::endl; 
+  initialize_fadc_data(fadc,3,kTRUE); 
+  std::cout << "post-initialization " << fadc[0].channel_data[0].curr << std::endl;
   // Create a character array to hold the raw data from the packet.
   UChar_t raw[RAWDATA_LENGTH];
   
   Int_t lastser[3] = {-1,-1,-1};
-  Int_t threshold[8] = {700,700,700,700,700,700,700,700}; // Needs to replaced with a routine to get the 
-							  // threshold from the odb or mysql db.....
+  std::vector<Int_t> threshold;
+  for(Int_t i = 0 ; i < 8 ; i++)threshold.push_back((Int_t)GetThreshold(nrun,i,0)); // Needs to replaced with a routine to get the 
+				                        			  // threshold from the odb or mysql db.....
   Int_t sample = 8;
   //---------------------------------------------------------------------------------------
   // create an output tree..............
@@ -307,9 +346,9 @@ void process_file(char *flnm,TString dir_save)
   while(!feof(inf)) {
     // read the header of the current event.
     fread(&o, sizeof(o), 1, inf);
-    printf("Here's a bunch of shit:\n");
-    printf("board_number = %d, packet serial = %d\n",o.board_number,o.packet_serial);
-    printf("fadc number = %d, data size = %d\n",o.fadc_number,o.data_size);
+//     printf("Here's a bunch of shit:\n");
+//     printf("board_number = %d, packet serial = %d\n",o.board_number,o.packet_serial);
+//     printf("fadc number = %d, data size = %d\n",o.fadc_number,o.data_size);
     //if(o.data_size <= 0) continue;
     Bool_t bnfound = false; // logical variable to check if a board is found.
     UShort_t bn    = 0;
@@ -352,7 +391,8 @@ void process_file(char *flnm,TString dir_save)
       // ........................................................................................
       // Looks for first packet 
 	Set_Sample_Data(fadc,o,blck,bn,true,false,nframe);
-      } else if ( fadc[bn].channel_data[o.fadc_number].curr == blck.timestamp - 1 || blck.timestamp == 0) {
+      } else if ( fadc[bn].channel_data[o.fadc_number].curr == blck.timestamp - 1) {
+	//if(blck.timestamp < 10)  std::cout << "timestamp is " << blck.timestamp << std::endl;
 	// I guess this is just some intermediate packet...
 	// the logical statement looks like if curr is 1 less than the packet timestamp then 
 	// this is just a sequential packet.
@@ -364,11 +404,9 @@ void process_file(char *flnm,TString dir_save)
 		fadc[bn].channel_data[o.fadc_number].cycle-1,o.fadc_number);
 	Set_Sample_Data(fadc,o,blck,bn,false,true,nframe);
 
-	
       } else {
 	
 	 // Fill tree data struct..................................................................
-	
 	  FillTree(fadc,fadc_event,t,bn,o.fadc_number,o.board_number);
 	  // increase the cycle number if the current timestamp exceeds the block timestamp
 	  Int_t nchnl = o.fadc_number;
@@ -376,6 +414,8 @@ void process_file(char *flnm,TString dir_save)
 	    fadc[bn].channel_data[nchnl].cycle++;
 	    fprintf(tsrec,"Old Timestamp = %u, New Timestamp = %lli, cycle = %u, Channel = %d\n",fadc[bn].channel_data[nchnl].curr,
 		    blck.timestamp,fadc[bn].channel_data[nchnl].cycle-1,nchnl);
+	     if(fadc[bn].channel_data[o.fadc_number].curr == blck.timestamp) std::cout << "Timestamps equal ??? " << std::endl;
+	    
 	  }
 	  initialize_fadc_data(fadc,3,false);
 	  nframe = 0;
