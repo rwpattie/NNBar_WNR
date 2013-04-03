@@ -124,14 +124,12 @@ int main(int argc,char *argv[])
     tr->GetEntry(nentry);
     cout << "Looping through waveform" << endl;
    
-    if(((int)event.channel == chan || chan == -1) && event.last >0){
-      for(Int_t i = 0 ; i < 5000 ; i++){
-	if(i < event.last ){
+    if(((int)event.channel == chan || chan == -1) && event.last > 10){
+      for(Int_t i = 0 ; i < event.last ; i++){
 	  Double_t adcvalue = (event.adc[i] < 4096) ? event.adc[i] : 4096;
 	  fadc.push_back(adcvalue);
 	  time.push_back((Double_t)(event.first_time*16.0e-9 + (Double_t)i*4.0e-9));
 	  cout  << "time stamp " << i << "\t" << event.first_time*16.0e-9 + i*4e-9 << "\t" << event.adc[i] << "\t" << event.last << endl;
-	} 
     }
     
     thr->SetX1(time[0]);
