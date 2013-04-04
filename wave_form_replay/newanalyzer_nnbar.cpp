@@ -108,7 +108,7 @@ int main (int argc, char *argv[]) {
 	
 	out_file->Write();
 	out_file->Close();
-	
+	printf ("Closing\n");	
 	return 0;
 }
 //-------------------------------------------------------------------------------------------
