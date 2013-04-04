@@ -75,6 +75,7 @@ struct fadc_channel_data_t {
 struct fadc_board_t {
     fadc_channel_data_t channel_data[8];
 };
+
 // ---------------------------------------------------------------------------------------
 // Define Function Prototypes
 Double_t GetThreshold(Int_t nrun, Int_t nchn,Int_t nthrsh);

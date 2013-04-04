@@ -45,10 +45,10 @@ Double_t GetThreshold(Int_t nrun, Int_t nchn,Int_t nthrsh)
 					getenv("UCNADBUSER"),getenv("UCNADBPASS"));
   
   char query[500];
-  sprintf(query,"select upper_threshold,lower_threshold from channel_info where run_number = %d and channel = %d",
-	  nrun,nchn);
+  sprintf(query,"select upper_threshold,lower_threshold from channel_info where run_number = %d and channel = %d",nrun,nchn);
   
   res = (TSQLResult*)sql->Query(query);
+  
   if(res->GetRowCount() != 0){
       while((row = (TSQLRow*)res->Next())){
 	  thresh = (Double_t)atof(row->GetField(nthrsh));
