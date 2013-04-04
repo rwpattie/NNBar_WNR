@@ -1,0 +1,2 @@
+#define UCNB_VERSION_MAJOR 1
+#define UCNB_VERSION_MINOR 0
