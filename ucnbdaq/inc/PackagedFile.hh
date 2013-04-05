@@ -26,6 +26,9 @@ private:
   bool fIsOpen;
 public:
   PackagedFile();
+  PackagedFile(std::string path, std::string name);
+  PackagedFile(std::string filename);
+  PackagedFile(int filenum);
   ~PackagedFile();
   bool Open(std::string path, std::string name);
   bool Open(std::string filename);

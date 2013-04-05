@@ -31,11 +31,7 @@ int main (int argc, char *argv[]) {
   int filenum = atoi(argv[1]);
 
   //-----Open file
-  PackagedFile InputFile;
-  //InputFile.Open("/home/leah/Work/UCNB/DAQ/Files/run00730.fat");
-  //InputFile.Open("run00730.fat");
-  InputFile.Open(filenum);
-  std::cout << "Is it open? " << InputFile.IsOpen() << std::endl;
+  PackagedFile InputFile(filenum);
   return 0; 
 }
 

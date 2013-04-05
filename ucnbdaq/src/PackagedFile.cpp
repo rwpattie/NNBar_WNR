@@ -5,7 +5,8 @@
 //          data.
 //
 // Revision History:
-// 2013/4/4:  LJB  file created
+// 2013/4/4:  LJB  file created, can open files in various ways
+// 2013/4/5:  LJB  constructors open files
 
 #ifndef __PACKAGED_FILE_CPP__
 #define __PACKAGED_FILE_CPP__
@@ -14,15 +15,29 @@
 #include "UCNBConfig.hh"
 
 /*************************************************************************/
-//                            Constructor
+//                           Constructors
 /*************************************************************************/
 PackagedFile::PackagedFile() {
+}
+
+PackagedFile::PackagedFile(std::string path, std::string name) {
+  Open(path,name);
+}
+
+PackagedFile::PackagedFile(std::string filename) {
+  Open(filename);
+}
+
+PackagedFile::PackagedFile(int filenum) {
+  Open(filenum);
 }
 
 /*************************************************************************/
 //                             Destructor
 /*************************************************************************/
 PackagedFile::~PackagedFile() {
+  if (fIsOpen)
+    Close(); 
 }
 
 /*************************************************************************/
@@ -68,8 +83,7 @@ bool PackagedFile::Open(std::string filename) {
     do {
       fFileName = filename;
       fFilePath = trypath[tp];
-      Open();
-    }while (++tp<ntrypath && !fIsOpen);
+    }while (++tp<ntrypath && !Open());
   }
   return fIsOpen;
 }

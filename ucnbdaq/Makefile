@@ -10,8 +10,8 @@ CPPFLAGS = -I inc/
 LDFLAGS = -L/usr/local/lib -L/usr/include -L/root/lib
 
 MAIN = unpack
-SOURCES = PackagedFile.cpp unpack.cpp
-OBJECTS = $(SOURCES:.cpp=.o)
+SOURCES = PackagedFile.cpp 
+OBJECTS = $(SOURCES:.cpp=.o) $(MAIN).o
 INCLUDES = $(SOURCES:.cpp=.hh) UCNBConfig.hh
 
 all: $(MAIN)
@@ -25,6 +25,6 @@ $(MAIN).o : $(MAIN).cpp $(INCLUDES)
 %.o : %.cpp %.hh
 	$(CXX) $(CPPFLAGS) $(LDFLAGS) $(ROOTCFLAGS) -c $< -o $@ $(ROOTLIBS) $(ROOTGLIBS)
 clean :
-	rm -f *.o *~ unpack
+	rm -f *.o *~ $(MAIN)
 
 .PHONY : all clean
