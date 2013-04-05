@@ -12,3 +12,4 @@ analysis_tools/fission_foil_analyzer
 *.odb
 *.sql
 *.eps
+analysis_tools/fission_foil_output
