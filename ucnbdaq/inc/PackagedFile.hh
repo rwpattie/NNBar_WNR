@@ -5,8 +5,9 @@
 //          data.
 //
 // Revision History:
-// 2013/4/4:  LJB  file created
-// 2013/4/5:  LJB  added multi-file support and read routines
+// 2013/4/4:  LJB  can open .fat files
+// 2013/4/5:  LJB  added multi-file support, read routines
+// 2013/4/8:  LJB  added print, filestream checks
  
 #ifndef PACKAGED_FILE_HH__
 #define PACKAGED_FILE_HH__
@@ -21,8 +22,11 @@
 
 using std::cout;
 using std::endl;
+
+
 class PackagedFile
 {
+
 private:
 
   const static int PF_ntypes = 3;
@@ -35,8 +39,8 @@ private:
   PF_file_t fFileList[PF_ntypes];
   void Close(PF_type ext);
   bool CheckExtension(std::string name, PF_type& ext);
-  void FillDataBlocks(char buffer[RAWDATA_LENGTH],int size,std::vector<Data_Block_t> &blck);
-
+  void FillDataBlocks(UChar_t buffer[RAWDATA_LENGTH],int size,std::vector<Data_Block_t> &blck);
+  bool CheckStream(std::ifstream& stream);
 public:
 
   PackagedFile();
@@ -51,6 +55,7 @@ public:
   bool ReadEvent(output_header& header, std::vector<Data_Block_t> &datablck);
   bool ReadHeader(output_header& header);
   bool ReadData(Int_t datasize, std::vector<Data_Block_t> &datablck);
+  void PrintHeader(output_header header);
   inline bool IsFatOpen(){return fFileList[FAT].fFileStream.is_open();}
   inline bool IsTsOpen(){return fFileList[TS].fFileStream.is_open();}
   inline bool IsMidOpen(){return fFileList[MID].fFileStream.is_open();}

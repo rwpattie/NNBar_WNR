@@ -13,6 +13,7 @@
 
 #include "Rtypes.h"
 #define RAWDATA_LENGTH 2048
+#define PACKET_SERIAL_MAX 65535
 #define NUMBOARDS 3
 
 extern const ULong64_t cycleoffset;

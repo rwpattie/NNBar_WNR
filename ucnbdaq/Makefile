@@ -10,7 +10,7 @@ CPPFLAGS = -I inc/
 LDFLAGS = -L/usr/local/lib -L/usr/include -L/root/lib
 
 MAIN = unpack
-SOURCES = PackagedFile.cpp FredDigitizer.cpp
+SOURCES = PackagedFile.cpp FredDigitizer.cpp Waveform.cpp
 OBJECTS = $(SOURCES:.cpp=.o) $(MAIN).o
 INCLUDES = $(SOURCES:.cpp=.hh) UCNBConfig.hh
 

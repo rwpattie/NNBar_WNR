@@ -5,9 +5,11 @@
 //          data.
 //
 // Revision History:
-// 2013/4/4:  LJB  file created, can open .fat files in various ways
-// 2013/4/5:  LJB  added open constructors, ts.txt and .mid file support,
-//                 data read routines
+// 2013/4/4:  LJB  can open .fat files in various ways
+// 2013/4/5:  LJB  added open constructors, extended to ts.txt and .mid files,
+//                 added data read routines
+// 2013/4/8:  LJB  fixed data read routine, added print header and filestream 
+//                 checker
 
 #ifndef PACKAGED_FILE_CPP__
 #define PACKAGED_FILE_CPP__
@@ -87,7 +89,7 @@ bool PackagedFile::Open(std::string filename) {
 }
 
 bool PackagedFile::Open(int filenum) {
-  //hardcode file name until I get a handle of our conventions
+  //hardcode file name until I get a handle on our conventions
   bool openany = false;
   char tempstr[255];
   sprintf(tempstr,"run%05d.fat",filenum);
@@ -137,6 +139,22 @@ bool PackagedFile::CheckExtension(std::string name, PF_type& ext) {
 }
 
 /*************************************************************************/
+//                            CheckStream
+/*************************************************************************/
+bool PackagedFile::CheckStream(std::ifstream& stream) {
+  if (!stream.good()) {
+    if (stream.eof())
+      cout << "End of file" << endl;
+    if (stream.fail())
+      cout << "I/O logical error" << endl;
+    if (stream.bad())
+      cout << "Read error" << endl;
+    return false;
+  }
+  return true;
+}
+
+/*************************************************************************/
 //                              ReadEvent
 /*************************************************************************/
 bool PackagedFile::ReadEvent(output_header& header, std::vector<Data_Block_t> &datablck) {
@@ -149,30 +167,36 @@ bool PackagedFile::ReadEvent(output_header& header, std::vector<Data_Block_t> &d
     bnfound = (header.board_number == boardnum[board_index])? true : false;
   } while (!bnfound && ++board_index < NUMBOARDS);
   if (!bnfound) {
-    printf("Board number does not match record.\n");
+    cout << "Board number does not match record." << endl;
     //return false;   do we need this? LJB
   }
-  //<Check last serial number?>
   if (!ReadData(header.data_size,datablck))
     return false;
+  return true;
 }
 
 /*************************************************************************/
 //                             ReadHeader
 /*************************************************************************/
 bool PackagedFile::ReadHeader(output_header& header) {
-  if (!IsFatOpen())
-    return false;
-  if (fFileList[FAT].fFileStream.eof())
-    return false;
-  fFileList[FAT].fFileStream >> header.board_number >> header.packet_serial
-			     >> header.fadc_number >> header.data_size
-			     >> header.tv_usec >> header.tv_sec
-			     >> header.admin_message >> header.buffer_number;
-  if (!fFileList[FAT].fFileStream) {
-    printf("Didnt read full header\n");
+  if (!IsFatOpen()) {
+    cout << "Error: file not open" << endl;
     return false;
   }
+  if (!CheckStream(fFileList[FAT].fFileStream))
+      return false;
+  //LJB This may eventually depend on .fat version number
+  fFileList[FAT].fFileStream.read((char*)&header.board_number,sizeof(Int_t));
+  fFileList[FAT].fFileStream.read((char*)&header.packet_serial,sizeof(Int_t));
+  fFileList[FAT].fFileStream.read((char*)&header.fadc_number,sizeof(Int_t));
+  fFileList[FAT].fFileStream.read((char*)&header.data_size,sizeof(Int_t));
+  fFileList[FAT].fFileStream.read((char*)&header.tv_usec,sizeof(Int_t));
+  fFileList[FAT].fFileStream.read((char*)&header.tv_sec,sizeof(Int_t));
+  fFileList[FAT].fFileStream.read((char*)&header.admin_message,sizeof(Int_t));
+  fFileList[FAT].fFileStream.read((char*)&header.buffer_number,sizeof(Int_t));
+
+  if (!CheckStream(fFileList[FAT].fFileStream))
+      return false;
   return true;
 }
 
@@ -180,18 +204,18 @@ bool PackagedFile::ReadHeader(output_header& header) {
 //                              ReadData
 /*************************************************************************/
 bool PackagedFile::ReadData(Int_t datasize, std::vector<Data_Block_t> &datablck) {
-  if (datasize <= 0)
+  if (datasize <= 0) {
+    cout << "Error: Data size 0" << endl;
     return false;
+  }
   if (datasize%10 != 0) {
-    printf("Bad data size\n");
+    cout << "Error: Bad data size" << endl;
     return false;
   }
-  char buffer[RAWDATA_LENGTH];
-  fFileList[FAT].fFileStream.read(buffer,datasize);
-  if (!fFileList[FAT].fFileStream) {
-    printf("Didnt read all data\n");
+  UChar_t buffer[RAWDATA_LENGTH];
+  fFileList[FAT].fFileStream.read((char*)buffer,datasize);
+  if (!CheckStream(fFileList[FAT].fFileStream))
     return false;
-  }
   FillDataBlocks(buffer,datasize/10,datablck);
   return true;
 }
@@ -199,7 +223,7 @@ bool PackagedFile::ReadData(Int_t datasize, std::vector<Data_Block_t> &datablck)
 /*************************************************************************/
 //                            FillDataBlocks
 /*************************************************************************/
-void PackagedFile::FillDataBlocks(char buffer[RAWDATA_LENGTH], int size, std::vector<Data_Block_t> &datablck) {
+void PackagedFile::FillDataBlocks(UChar_t buffer[RAWDATA_LENGTH], int size, std::vector<Data_Block_t> &datablck) {
   datablck.clear();
   datablck.resize(size);
   for (int i=0;i<size;i++) {    
@@ -216,6 +240,20 @@ void PackagedFile::FillDataBlocks(char buffer[RAWDATA_LENGTH], int size, std::ve
   }
 }
 
+/*************************************************************************/
+//                            PrintHeader
+/*************************************************************************/
+void PackagedFile::PrintHeader(output_header header){
+  cout << "This packet's header:" << endl;
+  cout << "** Board number:   " << header.board_number << endl;
+  cout << "** Packet Serial:  " << header.packet_serial << endl;
+  cout << "** FADC number:    " << header.fadc_number << endl;
+  cout << "** Data size:      " << header.data_size << endl;
+  cout << "** TV usec:        " << header.tv_usec << endl;
+  cout << "** TV sec:         " << header.tv_sec << endl;
+  cout << "** Admin. message: " << header.admin_message << endl;
+  cout << "** Buffer number:  " << header.buffer_number << endl;
+}
 
 
 #endif // __PACKAGED_FILE_CPP__
