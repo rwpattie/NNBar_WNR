@@ -8,6 +8,7 @@
 // 2013/4/4:  LJB  can open .fat files
 // 2013/4/5:  LJB  added multi-file support, read routines
 // 2013/4/8:  LJB  added print, filestream checks
+// 2013/4/9:  LJB  added swapendian
  
 #ifndef PACKAGED_FILE_HH__
 #define PACKAGED_FILE_HH__
@@ -41,6 +42,7 @@ private:
   bool CheckExtension(std::string name, PF_type& ext);
   void FillDataBlocks(UChar_t buffer[RAWDATA_LENGTH],int size,std::vector<Data_Block_t> &blck);
   bool CheckStream(std::ifstream& stream);
+  void SwapEndian(UInt_t& swapme, int bytes);
 public:
 
   PackagedFile();
@@ -57,6 +59,7 @@ public:
   bool ReadData(Int_t datasize, std::vector<Data_Block_t> &datablck);
   void PrintHeader(output_header header);
   inline bool IsFatOpen(){return fFileList[FAT].fFileStream.is_open();}
+  inline bool IsFatEOF(){return fFileList[FAT].fFileStream.eof();}
   inline bool IsTsOpen(){return fFileList[TS].fFileStream.is_open();}
   inline bool IsMidOpen(){return fFileList[MID].fFileStream.is_open();}
 

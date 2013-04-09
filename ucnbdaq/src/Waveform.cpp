@@ -31,7 +31,6 @@ void Waveform::UnpackWaves(output_header header, std::vector<Data_Block_t> &data
   packet_header_list.push_back(header);
   int smp = 0;
   while(smp<datablck.size()) {
-    cout << "Start waveform" << endl;
     waveform_t currentwave;
     currentwave.packet_header_ptr = &packet_header_list.back();
     currentwave.linkprev = 0;
@@ -40,7 +39,6 @@ void Waveform::UnpackWaves(output_header header, std::vector<Data_Block_t> &data
     int tcnt = 0;
     bool newwaveform = false;
     do {
-      cout << "Timestamp is now " << datablck[smp].timestamp << endl;
       for (int i=0;i<4;i++)
 	currentwave.data.push_back(datablck[smp].sample[i]);
       if (++smp<datablck.size())

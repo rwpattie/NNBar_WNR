@@ -21,7 +21,7 @@
 #include "Waveform.hh"
 
 void ReadPackets(PackagedFile& InputFile, Waveform& WaveList);
-bool Check_Serial(int& serialcounter, int& packetserial);
+int Check_Serial(int& serialcounter, int& packetserial);
 
 /*************************************************************************/
 //                            Main Function
@@ -63,38 +63,45 @@ void ReadPackets(PackagedFile& InputFile, Waveform& WaveList) {
   std::vector<Data_Block_t> datablck;
 
   int serialcounter = -1;
-  for (int i=0;i<2;i++) {
+  int packetcounter = 0;
+  int lostpacketcounter = 0;
+  do {
     //-----Read header + data
     if (!InputFile.ReadEvent(header,datablck)) {
-      cout << "Read Event failed!" << endl;
-      return;
+      if (InputFile.IsFatEOF())
+	continue;
+      else
+	cout << "Read Event failed!" << endl;
     }
     //-----Ignore duplicate packets
-    if (!Check_Serial(serialcounter, header.packet_serial))
-      continue;
+    int check = Check_Serial(serialcounter, header.packet_serial);
+    if (check == -1) continue;
+    else lostpacketcounter += check;
     //-----Unpack packet
-    InputFile.PrintHeader(header);
-    cout << "Have " << datablck.size() << " data blocks" << endl;
+    //InputFile.PrintHeader(header);
+    //cout << "Have " << datablck.size() << " data blocks" << endl;
     WaveList.UnpackWaves(header,datablck);
-  }
+    packetcounter++;
+  } while (!InputFile.IsFatEOF());
+  cout << "Read " << packetcounter << " packets, lost " << lostpacketcounter << endl;
 }
 
 /*************************************************************************/
 //                             Check_Serial 
 /*************************************************************************/
-bool Check_Serial(int& serialcounter, int& packetserial) {
+int Check_Serial(int& serialcounter, int& packetserial) {
+  int lostpackets = 0;
   if (serialcounter == -1) 
     serialcounter = packetserial - 1;
   if (serialcounter > 65000 && packetserial < 1000)
     serialcounter -= PACKET_SERIAL_MAX;
   if (serialcounter + 1 < packetserial)
-    cout << "Lost packets detected" << endl;
-  if (serialcounter > packetserial) {
-    cout << "Duplicate packet detected" << endl;
-    return false;
+    lostpackets = packetserial - (serialcounter + 1);
+  else if (serialcounter >= packetserial) {
+    return -1;
   }
   serialcounter = packetserial;
-  return true;
+  return lostpackets;
 }
 
 

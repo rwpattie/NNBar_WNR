@@ -10,6 +10,8 @@
 //                 added data read routines
 // 2013/4/8:  LJB  fixed data read routine, added print header and filestream 
 //                 checker
+// 2013/4/9:  LJB  data read now does an endian swap, to anticipate future
+//                 compatibility changes
 
 #ifndef PACKAGED_FILE_CPP__
 #define PACKAGED_FILE_CPP__
@@ -55,7 +57,10 @@ bool PackagedFile::Open(std::string path, std::string name) {
   std::string filename = path;
   filename.append("/");
   filename.append(name);
-  fFileList[ext].fFileStream.open(filename.c_str());
+  if (ext==FAT || ext==MID)
+    fFileList[ext].fFileStream.open(filename.c_str(),std::ios::binary);
+  else if (ext==TS)
+    fFileList[ext].fFileStream.open(filename.c_str());
   if (!fFileList[ext].fFileStream.is_open()) {
     fFileList[ext].fFilePath = path;
     fFileList[ext].fFileName = name;
@@ -143,13 +148,17 @@ bool PackagedFile::CheckExtension(std::string name, PF_type& ext) {
 /*************************************************************************/
 bool PackagedFile::CheckStream(std::ifstream& stream) {
   if (!stream.good()) {
-    if (stream.eof())
-      cout << "End of file" << endl;
-    if (stream.fail())
+    if (stream.eof()) {      
+      return false;
+    }
+    if (stream.fail()) {
       cout << "I/O logical error" << endl;
-    if (stream.bad())
+      return false;
+    }
+    if (stream.bad()) {
       cout << "Read error" << endl;
-    return false;
+      return false;
+    }
   }
   return true;
 }
@@ -186,14 +195,14 @@ bool PackagedFile::ReadHeader(output_header& header) {
   if (!CheckStream(fFileList[FAT].fFileStream))
       return false;
   //LJB This may eventually depend on .fat version number
-  fFileList[FAT].fFileStream.read((char*)&header.board_number,sizeof(Int_t));
-  fFileList[FAT].fFileStream.read((char*)&header.packet_serial,sizeof(Int_t));
-  fFileList[FAT].fFileStream.read((char*)&header.fadc_number,sizeof(Int_t));
-  fFileList[FAT].fFileStream.read((char*)&header.data_size,sizeof(Int_t));
-  fFileList[FAT].fFileStream.read((char*)&header.tv_usec,sizeof(Int_t));
-  fFileList[FAT].fFileStream.read((char*)&header.tv_sec,sizeof(Int_t));
-  fFileList[FAT].fFileStream.read((char*)&header.admin_message,sizeof(Int_t));
-  fFileList[FAT].fFileStream.read((char*)&header.buffer_number,sizeof(Int_t));
+  fFileList[FAT].fFileStream.read(reinterpret_cast<char *>(&header.board_number),sizeof(Int_t));
+  fFileList[FAT].fFileStream.read(reinterpret_cast<char *>(&header.packet_serial),sizeof(Int_t));
+  fFileList[FAT].fFileStream.read(reinterpret_cast<char *>(&header.fadc_number),sizeof(Int_t));
+  fFileList[FAT].fFileStream.read(reinterpret_cast<char *>(&header.data_size),sizeof(Int_t));
+  fFileList[FAT].fFileStream.read(reinterpret_cast<char *>(&header.tv_usec),sizeof(Int_t));
+  fFileList[FAT].fFileStream.read(reinterpret_cast<char *>(&header.tv_sec),sizeof(Int_t));
+  fFileList[FAT].fFileStream.read(reinterpret_cast<char *>(&header.admin_message),sizeof(Int_t));
+  fFileList[FAT].fFileStream.read(reinterpret_cast<char *>(&header.buffer_number),sizeof(Int_t));
 
   if (!CheckStream(fFileList[FAT].fFileStream))
       return false;
@@ -212,11 +221,30 @@ bool PackagedFile::ReadData(Int_t datasize, std::vector<Data_Block_t> &datablck)
     cout << "Error: Bad data size" << endl;
     return false;
   }
-  UChar_t buffer[RAWDATA_LENGTH];
-  fFileList[FAT].fFileStream.read((char*)buffer,datasize);
-  if (!CheckStream(fFileList[FAT].fFileStream))
-    return false;
-  FillDataBlocks(buffer,datasize/10,datablck);
+  int size = datasize/10;
+  datablck.clear();
+  datablck.resize(size);
+
+  for (int i=0;i<size;i++) {
+    UInt_t buffer; //needs unsigned cast
+    fFileList[FAT].fFileStream.read(reinterpret_cast<char *>(&buffer),4);
+    SwapEndian(buffer,4);
+    datablck[i].timestamp = (buffer >> 4);
+    datablck[i].overflowB0 = (buffer & 0x08);
+    datablck[i].overflowA0 = (buffer & 0x04);
+    datablck[i].overflowB1 = (buffer & 0x02);
+    datablck[i].overflowA1 = (buffer & 0x01);
+    fFileList[FAT].fFileStream.read(reinterpret_cast<char *>(&buffer),3);
+    SwapEndian(buffer,3);
+    datablck[i].sample[3] = ((buffer & 0xFFF000)>>12);
+    datablck[i].sample[2] =  (buffer & 0x000FFF);
+    fFileList[FAT].fFileStream.read(reinterpret_cast<char *>(&buffer),3);
+    SwapEndian(buffer,3);
+    datablck[i].sample[1] = ((buffer & 0xFFF000)>>12);
+    datablck[i].sample[0] =  (buffer & 0x000FFF);
+    if (!CheckStream(fFileList[FAT].fFileStream))
+      return false;
+  }
   return true;
 }
 
@@ -255,6 +283,18 @@ void PackagedFile::PrintHeader(output_header header){
   cout << "** Buffer number:  " << header.buffer_number << endl;
 }
 
+/*************************************************************************/
+//                             SwapEndian
+/*************************************************************************/
+void PackagedFile::SwapEndian(UInt_t& swapme, int bytes) {
+  if (bytes <= 1)
+    return;
+  UInt_t val = 0;
+  for (int i=0;i<bytes;i++) {
+    val |= ((swapme >> 8*i) & 0xFF) << (8*(bytes-1)-8*i);
+  }
+  swapme = val;
+}
 
 #endif // __PACKAGED_FILE_CPP__
 
