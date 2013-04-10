@@ -5,6 +5,7 @@
 //
 // Revision History:
 // 2013/4/5:  LJB  file created
+// 2013/4/10: LJB  added NUMCH global
 
 #ifndef FRED_DIGITIZER_HH__
 #define FRED_DIGITIZER_HH__
@@ -15,6 +16,7 @@
 #define RAWDATA_LENGTH 2048
 #define PACKET_SERIAL_MAX 65535
 #define NUMBOARDS 3
+#define NUMCH 8
 
 extern const ULong64_t cycleoffset;
 extern const UShort_t boardnum[NUMBOARDS];

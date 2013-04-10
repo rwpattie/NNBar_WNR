@@ -9,8 +9,8 @@ CXX = g++
 CPPFLAGS = -I inc/
 LDFLAGS = -L/usr/local/lib -L/usr/include -L/root/lib
 
-MAIN = unpack
-SOURCES = PackagedFile.cpp FredDigitizer.cpp Waveform.cpp
+MAIN = SimpleAnalyzer
+SOURCES = PackagedFile.cpp FredDigitizer.cpp Waveform.cpp SimpleAnalysisFile.cpp
 OBJECTS = $(SOURCES:.cpp=.o) $(MAIN).o
 INCLUDES = $(SOURCES:.cpp=.hh) UCNBConfig.hh
 
@@ -20,6 +20,9 @@ $(MAIN): $(OBJECTS) $(MAIN).cpp
 	$(CXX) $(CPPFLAGS) $(LDFLAGS) $(ROOTCFLAGS) -o $@ $(OBJECTS) $(ROOTLIBS) $(ROOTGLIBS)
 
 $(MAIN).o : $(MAIN).cpp $(INCLUDES)
+	$(CXX) $(CPPFLAGS) $(LDFLAGS) $(ROOTCFLAGS) -c $< -o $@ $(ROOTLIBS) $(ROOTGLIBS)
+
+SimpleAnalysisFile.o : SimpleAnalysisFile.cpp Waveform.o
 	$(CXX) $(CPPFLAGS) $(LDFLAGS) $(ROOTCFLAGS) -c $< -o $@ $(ROOTLIBS) $(ROOTGLIBS)
 
 %.o : %.cpp %.hh

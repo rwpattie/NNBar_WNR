@@ -427,7 +427,6 @@ void process_file(char *flnm,TString dir_save)
 	  initialize_fadc_data(fadc,3,false,o.fadc_number);
 	  nframe = 0;
 	  Set_Sample_Data(fadc,o,blck,bn,true,false,nframe);
-	  return;
 	}
     //}
      }

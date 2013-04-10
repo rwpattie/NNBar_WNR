@@ -13,4 +13,4 @@ analysis_tools/fission_foil_analyzer
 *.sql
 *.eps
 leah/
-unpack
+SimpleAnalyzer
