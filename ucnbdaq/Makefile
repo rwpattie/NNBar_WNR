@@ -22,7 +22,7 @@ $(MAIN): $(OBJECTS) $(MAIN).cpp
 $(MAIN).o : $(MAIN).cpp $(INCLUDES)
 	$(CXX) $(CPPFLAGS) $(LDFLAGS) $(ROOTCFLAGS) -c $< -o $@ $(ROOTLIBS) $(ROOTGLIBS)
 
-SimpleAnalysisFile.o : SimpleAnalysisFile.cpp Waveform.o
+SimpleAnalysisFile.o : SimpleAnalysisFile.cpp Waveform.o FADCEvent.hh
 	$(CXX) $(CPPFLAGS) $(LDFLAGS) $(ROOTCFLAGS) -c $< -o $@ $(ROOTLIBS) $(ROOTGLIBS)
 
 %.o : %.cpp %.hh

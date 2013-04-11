@@ -11,6 +11,7 @@
 // 2013/4/4:  LJB  opens and inspects input file
 // 2013/4/8:  LJB  reads waveforms
 // 2013/4/10: LJB  writes the standard analysis ROOT TTree
+// 2013/4/11: LJB  include linking
 
 #ifndef SIMPLE_ANALYZER_CPP__
 #define SIMPLE_ANALYZER_CPP__
@@ -55,18 +56,18 @@ int main (int argc, char *argv[]) {
   //-----Read packets
   Waveform WaveList;
   ReadPackets(InputFile, WaveList);
-  //To do: WaveList.LinkWaveforms();
+  WaveList.LinkWaves();
   cout << "Grabbed " << WaveList.GetSize() << " events." << endl;
 
   //-----Analyze packets
-  SimpleAnalysisFile fadc_event;
-  if (!fadc_event.Create(filenum))
+  SimpleAnalysisFile SAFile;
+  if (!SAFile.Create(filenum))
     cout << "File creation error" << endl;
-  fadc_event.AnalyzePackets(WaveList);
+  SAFile.AnalyzePackets(WaveList);
 
   //-----Write analyzed TTree
   cout << "Done." << endl;
-  fadc_event.Write();
+  SAFile.Write();
   return 0; 
 }
 

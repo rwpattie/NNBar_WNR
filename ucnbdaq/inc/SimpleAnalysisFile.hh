@@ -7,6 +7,7 @@
 // 2013/4/9:  LJB  skeleton class
 // 2013/4/10: LJB  added open/create/fill/write functions and analysis 
 //                 routines.
+// 2013/4/11: LJB  Moved TTree branches to FADCEvent class
  
 #ifndef SIMPLE_ANALYSIS_FILE_HH__
 #define SIMPLE_ANALYSIS_FILE_HH__
@@ -21,9 +22,12 @@
 #include "TFile.h"
 #include "TTree.h"
 
+#include "FADCEvent.hh"
 #include "FredDigitizer.hh"
 #include "UCNBConfig.hh"
+#if !defined (__CINT__)
 #include "Waveform.hh"
+#endif
 
 using std::cout;
 using std::endl;
@@ -43,29 +47,20 @@ public:
   bool Open(std::string path, std::string name);
   bool Open(std::string filename);
   bool Open(int filenum);
+  bool IsOpen();
+#if !defined (__CINT__)
   bool Create(std::string path, std::string name);
   bool Create(std::string filename);
   bool Create(int filenum);
   void AnalyzePackets(Waveform& WaveList);
+#endif // !defined (__CINT__)
   UShort_t CalcMax(std::vector<Int_t> data);
   UShort_t CalcMin(std::vector<Int_t> data);
   UShort_t CalcZero(std::vector<Int_t> data);
   UShort_t CalcPed(std::vector<Int_t> data);
   void FillTree();
   void Write();
-  ULong64_t first_time;  
-  ULong64_t global_time;
-  Int_t     packet_time_s;
-  Int_t     packet_time_us;
-  Int_t     packet_time_l;
-  Int_t     board;
-  Int_t     last;    //TTree requires Int_t for array index
-  UShort_t  adc[5000];
-  UShort_t  max;
-  UShort_t  min;
-  UShort_t  zero;
-  UShort_t  ped;
-  UShort_t  channel;
+  FADCEvent fadc_event;
   TFile* RootFile;   // may as well be public
   TTree* RootTree;
 };

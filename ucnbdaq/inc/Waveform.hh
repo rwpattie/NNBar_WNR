@@ -5,7 +5,7 @@
 //
 // Revision History:
 // 2013/4/8:  LJB  simple data unpacking
-// 2013/4/10  LJB  vector ptr replaced with index, added Get functions
+// 2013/4/10  LJB  vector ptr replaced with index, added Get/Link functions
  
 #ifndef WAVEFORM_HH__
 #define WAVEFORM_HH__
@@ -19,16 +19,18 @@
 
 using std::cout;
 using std::endl;
+using std::vector;
 
 class Waveform
 {
 
 private:
 
-  std::vector<output_header> packet_header_list;
+  bool linked;
+  vector<output_header> packet_header_list;
   struct waveform_t{
     int packet_header_idx;
-    struct waveform_t* linkprev;  //coming soon: linking waveforms
+    struct waveform_t* linkprev;
     struct waveform_t* linknext;
     Long64_t timestamp;
     std::vector<Int_t> data;
@@ -40,8 +42,10 @@ public:
   Waveform();
   ~Waveform();
   void UnpackWaves(output_header header, std::vector<Data_Block_t> &datablck);
-  void GetHeader(int i, output_header& header);
+  void LinkWaves();
+  bool GetWaveform(int i, std::vector<Int_t>& dest);
   void GetData(int i, std::vector<Int_t>& dest) {dest = waveform_list[i].data;}
+  void GetHeader(int i, output_header& header);
   inline Long64_t GetTimestamp(int i) {return waveform_list[i].timestamp;}
   inline int GetSize() {return waveform_list.size();}
 };

@@ -6,7 +6,9 @@
 // Revision History:
 // 2013/4/8:  LJB  simple data unpacking
 // 2013/4/10: LJB  packet_header_ptr is lost on vector resize; use index
-//                 instead; fixed waveform vector push; added GetHeader
+//                 instead; fixed waveform vector push; added linking
+//                 linking routine and Get functions
+// 2013/4/11: LJB  links waveforms with small time gaps
 
 #ifndef WAVEFORM_CPP__
 #define WAVEFORM_CPP__
@@ -17,7 +19,7 @@
 //                            Constructor
 /*************************************************************************/
 Waveform::Waveform() {
-  
+  linked = false;
 }
 
 /*************************************************************************/
@@ -50,6 +52,63 @@ void Waveform::UnpackWaves(output_header header, std::vector<Data_Block_t> &data
     }while(smp<datablck.size() && !newwaveform);
     waveform_list.push_back(currentwave);
   }
+}
+
+/*************************************************************************/
+//                             LinkWaves
+/*************************************************************************/
+void Waveform::LinkWaves() {
+  int lastindex[NUMCH];
+  int timestamp[NUMCH];
+  for (int c=0;c<NUMCH;c++) {
+    timestamp[c] = -1;
+  }
+  for (int i=0;i<waveform_list.size();i++) {
+    int idx = waveform_list[i].packet_header_idx;
+    int ch = packet_header_list[idx].fadc_number;
+    if (timestamp[ch] == -1) {
+      timestamp[ch] = waveform_list[i].timestamp;
+      lastindex[ch] = i;
+    }
+    else {
+      int diff = (waveform_list[i].timestamp > timestamp[ch]) ?
+	waveform_list[i].timestamp - timestamp[ch] : 
+	timestamp[ch] + cycleoffset - waveform_list[i].timestamp;
+      if (diff*4 - waveform_list[lastindex[ch]].data.size() < 1000) { 
+	waveform_list[i].linkprev = &waveform_list[lastindex[ch]];
+	waveform_list[lastindex[ch]].linknext = &waveform_list[i];
+      }
+      lastindex[ch] = i;
+      timestamp[ch] = waveform_list[i].timestamp;      
+    }
+  }
+  linked = true;
+}
+
+/*************************************************************************/
+//                             GetWaveform
+/*************************************************************************/
+bool Waveform::GetWaveform(int i, std::vector<Int_t>& dest){
+  if (!linked)
+    LinkWaves();
+  if (waveform_list[i].linkprev != 0)
+    return false;
+  dest = waveform_list[i].data;
+  struct waveform_t* waveptr = &waveform_list[i];
+  while (waveptr->linknext != 0) {
+    Long64_t timestamp = waveptr->timestamp;
+    int size = waveptr->data.size();
+    waveptr = waveptr->linknext;
+    int diff = (waveptr->timestamp > timestamp) ?
+      waveptr->timestamp - timestamp : 
+      timestamp + cycleoffset - waveptr->timestamp;
+    int numzeros = diff*4 - size;
+    if (numzeros > 0) {
+      dest.insert(dest.end(),numzeros,0);
+    }
+    dest.insert(dest.end(),waveptr->data.begin(),waveptr->data.end());
+  }
+  return true;
 }
 
 /*************************************************************************/

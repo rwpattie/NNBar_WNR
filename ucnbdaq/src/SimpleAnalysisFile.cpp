@@ -8,7 +8,10 @@
 // 2013/4/10: LJB  added open/create/fill/write functions and analysis 
 //                 routines. open doesnt set branches yet. typing is 
 //                 inconsistent in order to preserve original structures.
-
+// 2013/4/11: LJB  added !defined CINT macros to avoid having to debug 
+//                 generated vector<struct> dictionaries in ROOT. 
+//                 Moved TTree branches to FADCEvent class. open sets
+//                 branches.
  
 #ifndef SIMPLE_ANALYSIS_FILE_CPP__
 #define SIMPLE_ANALYSIS_FILE_CPP__
@@ -62,6 +65,22 @@ bool SimpleAnalysisFile::Open(std::string path, std::string name){
     return false;
   }
   createmode = false;
+
+  RootTree = (TTree*)RootFile->Get("t");
+  RootTree->SetBranchAddress("first_time",&fadc_event.first_time);
+  RootTree->SetBranchAddress("global_time",&fadc_event.global_time);
+  RootTree->SetBranchAddress("packet_time_s",&fadc_event.packet_time_s);
+  RootTree->SetBranchAddress("packet_time_us",&fadc_event.packet_time_us);
+  RootTree->SetBranchAddress("packet_time_l",&fadc_event.packet_time_l);
+  RootTree->SetBranchAddress("board",&fadc_event.board);
+  RootTree->SetBranchAddress("last",&fadc_event.last);
+  RootTree->SetBranchAddress("adc",fadc_event.adc);
+  RootTree->SetBranchAddress("max",&fadc_event.max);
+  RootTree->SetBranchAddress("min",&fadc_event.min);
+  RootTree->SetBranchAddress("zero",&fadc_event.zero);
+  RootTree->SetBranchAddress("ped",&fadc_event.ped);
+  RootTree->SetBranchAddress("channel",&fadc_event.channel);
+  RootTree->GetEntry(0);
 }
 
 bool SimpleAnalysisFile::Open(std::string filename){
@@ -97,6 +116,23 @@ bool SimpleAnalysisFile::Open(int filenum){
 }
 
 /*************************************************************************/
+//                                IsOpen 
+/*************************************************************************/
+bool SimpleAnalysisFile::IsOpen() {
+  if (RootFile == 0) {
+    return false;
+  }
+  if (!RootFile->IsOpen()) {
+    return false;
+  }
+  if (RootTree == 0) {
+    return false;
+  }
+  return true;
+}
+
+#if !defined (__CINT__)
+/*************************************************************************/
 //                               Create  
 /*************************************************************************/
 bool SimpleAnalysisFile::Create(std::string path, std::string name) {
@@ -115,20 +151,20 @@ bool SimpleAnalysisFile::Create(std::string path, std::string name) {
   }
   RootTree = new TTree("t","t");
 
-  last = RAWDATA_LENGTH;
-  RootTree->Branch("first_time",&first_time,"first_time/l");
-  RootTree->Branch("global_time",&global_time,"global_time/l");
-  RootTree->Branch("packet_time_s",&packet_time_s,"packet_time_s/I");
-  RootTree->Branch("packet_time_us",&packet_time_us,"packet_time_us/I");
-  RootTree->Branch("packet_time_l",&packet_time_l,"packet_time_l/I");
-  RootTree->Branch("board",&board,"board/I");
-  RootTree->Branch("last",&last,"last/I");
-  RootTree->Branch("adc",adc,"adc[last]/s");
-  RootTree->Branch("max",&max,"max/s");
-  RootTree->Branch("min",&min,"min/s");
-  RootTree->Branch("zero",&zero,"zero/s");
-  RootTree->Branch("ped",&ped,"ped/s");
-  RootTree->Branch("channel",&channel,"channel/s");
+  fadc_event.last = RAWDATA_LENGTH;
+  RootTree->Branch("first_time",&fadc_event.first_time,"first_time/l");
+  RootTree->Branch("global_time",&fadc_event.global_time,"global_time/l");
+  RootTree->Branch("packet_time_s",&fadc_event.packet_time_s,"packet_time_s/I");
+  RootTree->Branch("packet_time_us",&fadc_event.packet_time_us,"packet_time_us/I");
+  RootTree->Branch("packet_time_l",&fadc_event.packet_time_l,"packet_time_l/I");
+  RootTree->Branch("board",&fadc_event.board,"board/I");
+  RootTree->Branch("last",&fadc_event.last,"last/I");
+  RootTree->Branch("adc",fadc_event.adc,"adc[last]/s");
+  RootTree->Branch("max",&fadc_event.max,"max/s");
+  RootTree->Branch("min",&fadc_event.min,"min/s");
+  RootTree->Branch("zero",&fadc_event.zero,"zero/s");
+  RootTree->Branch("ped",&fadc_event.ped,"ped/s");
+  RootTree->Branch("channel",&fadc_event.channel,"channel/s");
 
   createmode = true;
   return true;
@@ -180,34 +216,37 @@ void SimpleAnalysisFile::AnalyzePackets(Waveform& WaveList) {
     ncycle[c] = 0;
   for (int i=0;i<WaveList.GetSize();i++) {
     //-----Grab waveform info
-    WaveList.GetData(i,data);
+    if (!WaveList.GetWaveform(i,data)) {
+      continue;
+    }
     WaveList.GetHeader(i,header);
     timestamp = WaveList.GetTimestamp(i);
     //-----Fill header info
-    board = header.board_number;
-    channel = header.fadc_number;
+    fadc_event.board = header.board_number;
+    fadc_event.channel = header.fadc_number;
     //-----Update time variables
-    if (current_timestamp[channel] > timestamp)
-      ncycle[channel]++;
+    if (current_timestamp[fadc_event.channel] > timestamp)
+      ncycle[fadc_event.channel]++;
     if (initial_time == -1)
       initial_time = header.tv_sec;
-    first_time = timestamp;
-    global_time = timestamp + (cycleoffset * ncycle[channel]);
-    packet_time_s = header.tv_sec;
-    packet_time_us = header.tv_usec;
-    packet_time_l = header.tv_sec - initial_time;
+    fadc_event.first_time = timestamp;
+    fadc_event.global_time = timestamp + (cycleoffset * ncycle[fadc_event.channel]);
+    fadc_event.packet_time_s = header.tv_sec;
+    fadc_event.packet_time_us = header.tv_usec;
+    fadc_event.packet_time_l = header.tv_sec - initial_time;
     //-----Store waveform
-    last = data.size();
-    for (int j=0;j<last;j++)
-      adc[j] = static_cast<UShort_t>(data[j]);
+    fadc_event.last = data.size();
+    for (int j=0;j<fadc_event.last;j++)
+      fadc_event.adc[j] = static_cast<UShort_t>(data[j]);
     //-----Calculate statistics
-    max = CalcMax(data);
-    min = CalcMin(data);
-    zero = CalcZero(data);
-    ped = CalcPed(data);
+    fadc_event.max = CalcMax(data);
+    fadc_event.min = CalcMin(data);
+    fadc_event.zero = CalcZero(data);
+    fadc_event.ped = CalcPed(data);
     FillTree();
   }
 }
+#endif // !defined (__CINT__)
 
 /*************************************************************************/
 //                              CalcMax  
@@ -296,6 +335,7 @@ void SimpleAnalysisFile::Write(){
   RootFile->Write();
   Close();
 }
+
 
 #endif // SIMPLE_ANALYSIS_FILE_CPP__
 
