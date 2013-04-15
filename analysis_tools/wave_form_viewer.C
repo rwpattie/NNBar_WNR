@@ -1,5 +1,6 @@
 #include <TTree.h>
 #include <TFile.h>
+#include <TF1.h>
 #include <TGraph.h>
 #include <TCanvas.h>
 #include <TROOT.h>
@@ -86,6 +87,8 @@ int main(int argc,char *argv[])
   tr->SetBranchAddress("ped",&event.ped);
   tr->SetBranchAddress("channel",&event.channel);
   
+  TF1 *fAve = new TF1("fAve","[0]",0,10);
+  
   Int_t nevents = (Int_t)tr->GetEntries();
   TCanvas *c1 = new TCanvas("c1","c1");
   c1->cd();
@@ -96,6 +99,7 @@ int main(int argc,char *argv[])
   Int_t chan = 0;
   cout << "Enter Channel Number or -1 for all channels : " << endl;
   cin >> chan;
+  
   
   TLine *thr = new TLine(0,1,0,1);
   TLine *lthr = new TLine(0,1,0,1);
@@ -148,6 +152,7 @@ int main(int argc,char *argv[])
     gr.SetMarkerColor(2);
     gr.SetLineColor(2);
     gr.Draw("apl");
+    gr.Fit(fAve,"RME","",time[100],time[650]);
     thr->Draw("same");
     lthr->Draw("same");
     c1->Update();
