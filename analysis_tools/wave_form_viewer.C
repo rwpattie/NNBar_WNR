@@ -88,7 +88,7 @@ int main(int argc,char *argv[])
   tr->SetBranchAddress("channel",&event.channel);
   
   TF1 *fAve = new TF1("fAve","[0]",0,10);
-  
+  fAve->SetLineColor(4);
   Int_t nevents = (Int_t)tr->GetEntries();
   TCanvas *c1 = new TCanvas("c1","c1");
   c1->cd();
@@ -152,7 +152,7 @@ int main(int argc,char *argv[])
     gr.SetMarkerColor(2);
     gr.SetLineColor(2);
     gr.Draw("apl");
-    gr.Fit(fAve,"RME","",time[100],time[650]);
+    gr.Fit(fAve,"RME","",time[1],time[100]);
     thr->Draw("same");
     lthr->Draw("same");
     c1->Update();

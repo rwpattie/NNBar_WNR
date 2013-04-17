@@ -15,7 +15,9 @@
 #include <stdlib.h> 
 #include <iostream>
 
+// -- Analyzer includes
 #include "typesdef.h"
+#include "waveprocessing.h"
 
 #define NSAMPLECUT 400
 #define FITHI 650
@@ -88,16 +90,22 @@ int main(int argc,char *argv[])
    tr->SetBranchAddress("channel",&event.channel);
    //-----------------------------------------------
    DefineHists();
+   
+   WaveProcessor *WavePr = new WaveProcessor();
+   WavePr->GetThreshold(atoi(argv[1]),6);
    // Loop over the events,
    for(Int_t i = 0 ; i < tr->GetEntries() ; i++){
       tr->GetEntry(i);
- 
       switch(event.channel){
+	// Look at the Digitized TAC Pulses
 	case 7:
 	    Analyze_TAC(event);
 	    break;
+        // Look at the Analog signal..
 	case 6:
 	    Analyze_ADC(event);
+	    WavePr->IncrimentWaveCnt();
+	    WavePr->CalculatePreTrigger(event);
 	    break;
 	default:
 	    break;
@@ -204,13 +212,12 @@ void GenerateEnergySpec(TH1F *hTof,TH1F *&hEne,const char *title, const char *na
       ebins.push_back(EfromT(hTof->GetBinCenter(i) + dT,13.));
       tbins.push_back(i);
     // Double_t EE =  EfromT(hTof->GetBinCenter(i),13.);
-      std::cout << i << "  ebins["<<nbin<<"] = " << ebins[nbin] << " dT " << dT << " \t" << hTof->GetBinCenter(i) << endl;
+   //   std::cout << i << "  ebins["<<nbin<<"] = " << ebins[nbin] << " dT " << dT << " \t" << hTof->GetBinCenter(i) << endl;
       nbin++;
     } else if(TMath::IsNaN(EfromT(hTof->GetBinCenter(i) + dT,13.))){
-	cout << "For unphysical energy there are " << hTof->GetBinContent(i) << " counts in the timing distribution at " << hTof->GetBinCenter(i) << "." << endl;
+//	cout << "For unphysical energy there are " << hTof->GetBinContent(i) << " counts in the timing distribution at " << hTof->GetBinCenter(i) << "." << endl;
     }
   }
-  cout << ebins.size() << "\t" << tbins.size() << endl;
   
   hEne = new TH1F(title,name,(int)ebins.size()-1,&ebins[0]);
   
@@ -349,5 +356,6 @@ Double_t EfromT(Double_t t,Double_t Dis)
     //cout << Er << "\t" << a << endl;
     return Er*1e-6;
 }
+
 
 #endif

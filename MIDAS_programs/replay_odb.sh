@@ -101,7 +101,7 @@ do
     SDFACTR=$(odbedit -e Default -c 'ls "/Equipment/fADCs/Settings/NFADC 00/Channel '$j'/sd_factor"' | awk '{ s = ""; for (i = 2; i <= NF; i++) s = s $i " "; print s }')
     COMMENTChl=$(odbedit -e Default -c 'ls "/Experiment/Run Parameters/Channel '$j'"' | awk '{ s = ""; for (i = 3; i <= NF; i++) s = s $i " "; print s }')
     # generate the sql command file to insert these variables to the table
-    echo "insert into wnr_run_info.channel_info (run_number,trigger_mask,channel,upper_threshold,lower_threshold,presamples,postsamples,sd_factor,comment,nrun) values($Run_number,$TRMSK,$j,$UTHRSH,$LTHRSH,$PRESMPL,$PRESMPL,$SDFACTR,'$COMMENTChl',$nkey)" >> input_line.sql
+    echo "insert into wnr_run_info.channel_info (run_number,trigger_mask,channel,upper_threshold,lower_threshold,presamples,postsamples,sd_factor,comment,nrun) values($Run_number,$TRMSK,$j,$UTHRSH,$LTHRSH,$PRESMPL,$PSTSMPL,$SDFACTR,'$COMMENTChl',$nkey)" >> input_line.sql
     # send the command to the database
     mysql -u $UCNADBUSER --password=$UCNADBPASS < input_line.sql
     # incriment the unique key for the channel_info table.
