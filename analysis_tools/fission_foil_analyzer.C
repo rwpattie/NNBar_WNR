@@ -3,6 +3,7 @@
 // -- ROOT libraries
 #include <TTree.h>
 #include <TPad.h>
+#include <TGraph.h>
 #include <TCanvas.h>
 #include <TH1F.h>
 #include <TH2F.h>
@@ -10,6 +11,7 @@
 #include <TROOT.h>
 #include <TStyle.h>
 #include <TMath.h>
+#include <TLegend.h>
 // -- c libraries
 #include <stdio.h>     
 #include <stdlib.h> 
@@ -31,6 +33,7 @@ using namespace std;
 //
 TH1F *hTAC,*hPulse;
 TH2F *hNvsT;
+TH2F *hRiseTimeVsADC;
 TH1F *hADC_Sig;
 TH1F *hADC_Bck;
 TH1F *hRawTime,*hCorTime;
@@ -56,6 +59,8 @@ void Get_WNR_TOF();
 void DrawTOF(TCanvas *c1,Int_t nrun);
 void GenerateEnergySpec(TH1F* hTof, TH1F *&hEne,const char *title, const char *name);
 Double_t EfromT(Double_t t,Double_t Dis);
+void CorrectFissionCrossSection(TH1F *hin);
+void DrawEnergySpec(TCanvas *c,Int_t nrun);
 //---------------------------------------------------------------------------------------
 Int_t muPulse[400];
 
@@ -96,6 +101,8 @@ int main(int argc,char *argv[])
    // Loop over the events,
    for(Int_t i = 0 ; i < tr->GetEntries() ; i++){
       tr->GetEntry(i);
+      Int_t pretr    = 0;
+      Int_t risetime = 0;
       switch(event.channel){
 	// Look at the Digitized TAC Pulses
 	case 7:
@@ -105,7 +112,9 @@ int main(int argc,char *argv[])
 	case 6:
 	    Analyze_ADC(event);
 	    WavePr->IncrimentWaveCnt();
-	    WavePr->CalculatePreTrigger(event);
+	    pretr    = WavePr->CalculatePreTrigger(event);
+	    risetime = WavePr->TimeToPeak(event,pretr);
+	    hRiseTimeVsADC->Fill(risetime*16e-3,event.max-event.ped);
 	    break;
 	default:
 	    break;
@@ -116,7 +125,7 @@ int main(int argc,char *argv[])
    Find_Micro_Pulses();
    Rebin_Timing();
    Get_WNR_TOF();
-   GenerateEnergySpec(hFCTof  ,hTAC_Energy,"hTAC_Energy","Energy spectrum;Energy [MeV]; Counts");
+   GenerateEnergySpec(hFCTof  ,hTAC_Energy,"hTAC_Energy","Energy spectrum;Energy [MeV]; n/(#muP sr MeV)");
    GenerateEnergySpec(hCorTime,hADC_Energy,"hADC_Energy","Energy spectrum;Energy [MeV]; Counts");
    GenerateEnergySpec(hTAC    ,hDTAC_Energy,"hDTAC_Energy","Energy spectrum;Energy [MeV]; Counts");
    
@@ -137,29 +146,59 @@ int main(int argc,char *argv[])
    hADC_Sig->Draw("same");
    c1->Print(Form("ff_ADC_sig_bck_%d.pdf",atoi(argv[1])));
    c1->Clear();
-   hTAC_Energy->Draw();
-   hTAC_Energy->GetXaxis()->SetRangeUser(.1,1000);
-   hTAC_Energy->GetYaxis()->SetRangeUser(0.1,40);
    
-   hDTAC_Energy->Scale(17);
-   hDTAC_Energy->SetLineColor(4);
-   hDTAC_Energy->Draw("same e1");
-   hADC_Energy->SetLineColor(2);
-   hADC_Energy->SetMarkerColor(2);
-   hADC_Energy->SetMarkerStyle(20);
-   hADC_Energy->Scale(2);
-   hADC_Energy->Draw("same e1");
-   hTAC_Energy->Draw("same");
-   gPad->SetLogy();
-   gPad->SetLogx();
-   c1->Print(Form("ff_Converted_Energy_Spectra_%d.pdf",atoi(argv[1])));
+   DrawEnergySpec(c1,atoi(argv[1]));
+ 
+   gPad->SetLogx(0);
+   gPad->SetLogy(0);
+   hRiseTimeVsADC->Draw();
+   c1->Print(Form("ff_risetime_vs_adc_%d.pdf",atoi(argv[1])));
    
    std::cout << "Integral in Signal after cut : " << hPulse->Integral() << " \t" << hADC_Sig->Integral() << std::endl;
    std::cout << "Integral in TAC after cuts   : " << hTAC->Integral() << std::endl;
    
    return -1;
 }
-//--------------------------------------------------------------------------------------------------------------------------------
+
+void DrawEnergySpec(TCanvas *c1,Int_t nrun)
+{
+   hTAC_Energy->SetLineColor(4);
+   hTAC_Energy->SetMarkerColor(4);
+   hTAC_Energy->Draw("e1");
+   hTAC_Energy->GetXaxis()->SetRangeUser(1,1000);
+   hTAC_Energy->GetYaxis()->SetRangeUser(1e4,5e7);
+   
+   hDTAC_Energy->Scale(17);
+   hDTAC_Energy->SetLineColor(1);
+   hDTAC_Energy->SetMarkerStyle(7);
+   hDTAC_Energy->SetMarkerColor(1);
+   hDTAC_Energy->Draw("same e1 x0");
+   
+   hADC_Energy->SetLineColor(2);
+   hADC_Energy->SetMarkerColor(2);
+   hADC_Energy->SetMarkerStyle(20);
+   hADC_Energy->SetMarkerSize(0.6);
+   hADC_Energy->Scale(2);
+   
+   hADC_Energy->Draw("same e1 x0");   
+   
+   gPad->SetLogy();
+   gPad->SetLogx();
+   
+   TLegend leg(0.5,0.6,0.86,0.86);
+   leg.SetFillColor(0);
+   leg.AddEntry(hTAC_Energy,"WNR TAC","lp");
+   leg.AddEntry(hDTAC_Energy,"fADC TAC","lp");
+   leg.AddEntry(hADC_Energy,"Analog fADC","lp");
+   leg.Draw();
+   
+   c1->Print(Form("ff_Converted_Energy_Spectra_%d.pdf",nrun));
+   c1->Clear();
+  
+}
+
+
+//-------------------------------------------------------------------------------------------
 void DrawTOF(TCanvas *c1,Int_t nrun)
 {
    c1->cd();
@@ -208,14 +247,12 @@ void GenerateEnergySpec(TH1F *hTof,TH1F *&hEne,const char *title, const char *na
   
   for(Int_t i = hTof->GetNbinsX(); i > 0 ; i--){
     Double_t dT = hTof->GetBinWidth(i); // Get the delta T
-    if(hTof->GetBinCenter(i) > 0 && !(TMath::IsNaN(dT)) && !(TMath::IsNaN(EfromT(hTof->GetBinCenter(i) + dT,13.)))){
+    if(hTof->GetBinCenter(i) > 0 && !(TMath::IsNaN(dT)) && 
+      !(TMath::IsNaN(EfromT(hTof->GetBinCenter(i) + dT,13.)))){
       ebins.push_back(EfromT(hTof->GetBinCenter(i) + dT,13.));
       tbins.push_back(i);
-    // Double_t EE =  EfromT(hTof->GetBinCenter(i),13.);
-   //   std::cout << i << "  ebins["<<nbin<<"] = " << ebins[nbin] << " dT " << dT << " \t" << hTof->GetBinCenter(i) << endl;
       nbin++;
-    } else if(TMath::IsNaN(EfromT(hTof->GetBinCenter(i) + dT,13.))){
-//	cout << "For unphysical energy there are " << hTof->GetBinContent(i) << " counts in the timing distribution at " << hTof->GetBinCenter(i) << "." << endl;
+      } else if(TMath::IsNaN(EfromT(hTof->GetBinCenter(i) + dT,13.))){
     }
   }
   
@@ -225,9 +262,12 @@ void GenerateEnergySpec(TH1F *hTof,TH1F *&hEne,const char *title, const char *na
       Int_t n = tbins[i];
       Double_t cnts = hTof->GetBinContent(n)*hTof->GetBinWidth(n)/hEne->GetBinWidth(i);
       hEne->SetBinContent(i,cnts);
+      hEne->SetBinError(i,hTof->GetBinError(n)*hTof->GetBinWidth(n)/hEne->GetBinWidth(i));
   }
+  
+  CorrectFissionCrossSection(hEne);
 };
-//---------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------
 void DefineHists()
 {
    hTAC = new TH1F("hTAC","Fission Foil TAC; Time [#mus];Counts",1200,0,2);
@@ -236,15 +276,17 @@ void DefineHists()
    hNvsT = new TH2F("hNvsT","Sample size vs. Pulse Height;N_{sample};Pulse Height (max(adc) - ped)",100,0,1000,100,0,4000);
    hADC_Bck = new TH1F("hADC_Bck","Bckgrd ADC;ADC (max-ped); Counts",400,0,4000);
    hADC_Sig = new TH1F("hADC_Sig","Signal ADC;ADC (max-ped); Counts",400,0,4000);
+   hRiseTimeVsADC = new TH2F("hRiseTimeVsADC","Rise Time vs. Peak Heigh;"
+			     "Rise Time [ns];Peak Height",100,0,2,100,0,4000);
    //hTAC_Energy = new TH1F("hTAC_Energy","Energy spectrum; Energy (MeV); Counts",1000,0,1000);
    //hADC_Energy = new TH1F("hADC_Energy","Energy spectrum; Energy (MeV); Counts",100,0,1000);
 }
-//-----------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
 void Analyze_TAC(Fadc_Event event)
 {
     if(event.last > 40) hTAC->Fill((2060.-Average_TAC_Shelf(event))*0.00051 + 0.0473);
 }
-
+//==========================================================================================
 void Analyze_ADC(Fadc_Event event)
 {
   Double_t cyclet = 112.;
@@ -260,7 +302,7 @@ void Analyze_ADC(Fadc_Event event)
     hRawTime->Fill(event.first_time);
   }
 }
-
+//=====================================================================================
 void SetROOTOpt()
 {
   gROOT->SetStyle("Plain");
@@ -274,10 +316,11 @@ void SetROOTOpt()
   gStyle->SetTitleOffset(1.2,"x");
   gStyle->SetTitleOffset(1.2,"y");
   gStyle->SetPadTopMargin(0.1);
+//  TH1::SetDefaultSumw2(kTRUE);
   gStyle->SetPadRightMargin(0.12);
   gStyle->SetPadBottomMargin(0.16);
 }
-
+//=======================================================================================
 Double_t Average_TAC_Shelf(Fadc_Event eve)
 {
   Int_t nbins = FITHI - FITLOW;
@@ -289,7 +332,7 @@ Double_t Average_TAC_Shelf(Fadc_Event eve)
   ped  = ped / 100.;
   return aver - ped ; 
 }
-
+//=======================================================================================
 void Find_Micro_Pulses()
 {
   Int_t npulse = 0;
@@ -305,12 +348,11 @@ void Find_Micro_Pulses()
       }
     }
   }
-  //  for(int i = 0 ; i < npulse ; i++)
-  //  std::cout << "Pulse i : " << i << " at  t = " << muPulse[i]*16e-3 << std::endl;
-};
-
+}
+//=====================================================================================
 void Rebin_Timing()
 {
+  
   hCorTime = new TH1F("hCorTime","Corrected Timing;TOF [#mus];Counts",200,0,2.0);
   Int_t npulse = 0;
   for(Int_t i = 1 ; i < hRawTime->GetNbinsX() ; i++){
@@ -329,7 +371,7 @@ void Rebin_Timing()
     }
   }
 }
-
+//=====================================================================================
 void Get_WNR_TOF()
 {
     TFile *fWNR = new TFile("FCtof.root","READ");
@@ -346,16 +388,37 @@ void Get_WNR_TOF()
       }
     }
 }
-
+//====================================================================================
 Double_t EfromT(Double_t t,Double_t Dis)
 {
     t *= 1e-6;
+   
     Double_t mn = MASSN*1e6;
     Double_t a = TMath::Power(Dis/(TMath::C()*t),2);
     Double_t Er = (1./sqrt(1-a) - 1)*mn;
-    //cout << Er << "\t" << a << endl;
+   
     return Er*1e-6;
 }
-
+//=====================================================================================
+void CorrectFissionCrossSection(TH1F *hin)
+{
+  
+  TGraph *gU235 = new TGraph("u238_totalfission.txt","%lg %lg %*lg");
+  
+  Double_t domega = 2.4e-5;
+  Double_t eff    = 0.98;
+  Double_t rho    = 0.2;
+  
+  for(Int_t i = 1 ; i <= hin->GetNbinsX() ; i++){
+      Double_t ubin = hin->GetBinCenter(i) + hin->GetBinWidth(i);
+      Double_t lbin = hin->GetBinCenter(i) - hin->GetBinWidth(i);
+      Double_t sigma = gU235->Eval(hin->GetBinCenter(i)*1e6);
+      if(sigma > 0 ){
+	  hin->SetBinContent(i,hin->GetBinContent(i)/(sigma*domega*eff*rho));
+	  hin->SetBinError(i,hin->GetBinError(i)/(sigma*domega*eff*rho));
+      }
+  }
+  delete gU235;
+}
 
 #endif
