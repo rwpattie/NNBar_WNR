@@ -15,24 +15,24 @@ WaveProcessor::~WaveProcessor()
 
 void WaveProcessor::ProcessWave(Fadc_Event eve)
 {
-   Int_t PreTriggerTime = CalculatePreTrigger(eve);
+   //Int_t PreTriggerTime = CalculatePreTrigger(eve);
   
 }
 //---------------------------------------------------------------------
-Int_t WaveProcessor::CalculatePreTrigger(Fadc_Event eve)
+Int_t WaveProcessor::CalculatePreTrigger(Fadc_Event eve,Int_t nc)
 {
     Int_t precnt  = 0; // counter for the pretrigger samples
     Int_t postcnt = eve.last;
     
     do {
       precnt++;
-    } while( eve.adc[precnt] < Chan.uthresh && 
-	     eve.adc[precnt] > Chan.lthresh);
+    } while( eve.adc[precnt] < Chan[nc].uthresh && 
+	     eve.adc[precnt] > Chan[nc].lthresh);
     
     do {
       postcnt--;
-    } while( eve.adc[precnt] < Chan.uthresh && 
-	     eve.adc[precnt] > Chan.lthresh);
+    } while( eve.adc[precnt] < Chan[nc].uthresh && 
+	     eve.adc[precnt] > Chan[nc].lthresh);
     /*
     std::cout << "Pretrigger samples are : "<< precnt << "\t" << 16*(Chan.pre+1) << std::endl;
     
@@ -52,8 +52,8 @@ Int_t WaveProcessor::TimeToPeak(Fadc_Event eve,Int_t trgsample)
     // will be returned.
     
     if(trgsample > eve.last){
-	std::cout << "Trigger point incorrectly set, returing to"
-		     " default paramater" << std::endl;
+//	std::cout << "Trigger point incorrectly set, returing to"
+//		     " default paramater" << std::endl;
 	trgsample = 0;
     }
     
@@ -89,6 +89,7 @@ Bool_t WaveProcessor::GetThreshold(Int_t nrun, Int_t nchn)
 					getenv("UCNADBUSER"),getenv("UCNADBPASS"));
   // Generate the query
   char query[500];
+  
   sprintf(query,"select upper_threshold,lower_threshold,presamples,postsamples from "
                 "channel_info where run_number = %d and "
 		" channel = %d",nrun,nchn);
@@ -97,10 +98,10 @@ Bool_t WaveProcessor::GetThreshold(Int_t nrun, Int_t nchn)
   // process the results
   if(res->GetRowCount() != 0){
       while((row = (TSQLRow*)res->Next())){
-	  Chan.uthresh = atoi(row->GetField(0));
-	  Chan.lthresh = atoi(row->GetField(1));
-	  Chan.pre     = atoi(row->GetField(2));
-	  Chan.post    = atoi(row->GetField(3));
+	  Chan[nchn].uthresh = atoi(row->GetField(0));
+	  Chan[nchn].lthresh = atoi(row->GetField(1));
+	  Chan[nchn].pre     = atoi(row->GetField(2));
+	  Chan[nchn].post    = atoi(row->GetField(3));
       }
   }
   

@@ -32,14 +32,14 @@ class WaveProcessor {
       
       Int_t NWaves;  // number of waveforms processed
       Wave_Averages_t WAve;
-            
+                  
     public :
       
       WaveProcessor();
       ~WaveProcessor();
       //-------------------------------------------------
       // Variables
-      Chan_t Chan;
+      Chan_t Chan[8]; 
       //-------------------------------------------------
       // Functions
       void     IncrimentWaveCnt(){NWaves++;}
@@ -48,7 +48,7 @@ class WaveProcessor {
       Double_t GetAveWidth() {return WAve.DeltaT;}
       Double_t GetAvePedestal() {return WAve.Pedestal;}
       void     ProcessWave(Fadc_Event eve);
-      Int_t    CalculatePreTrigger(Fadc_Event eve);
+      Int_t    CalculatePreTrigger(Fadc_Event eve,Int_t nc);
       Int_t    TimeToPeak(Fadc_Event eve,Int_t trgsample=0);
       Bool_t   GetThreshold(Int_t nrun,Int_t nchn);
 };
