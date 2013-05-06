@@ -21,7 +21,7 @@ MYOS := $(subst -,,$(shell uname))
         LD            = gcc
         LDFLAGS       = -g
         SOFLAGS       = -shared
-        CXXFLAGS     += $(ROOTCFLAGS) -Iwave_util
+        CXXFLAGS     += $(ROOTCFLAGS) -Iwave_util -Idetector_utils
         LIBS          = $(ROOTLIBS) 
         GLIBS         = $(ROOTGLIBS)
         LIBS         += -lstdc++ -lz -lRMySQL
@@ -31,9 +31,12 @@ MYOS := $(subst -,,$(shell uname))
 
 %: wave_util/%.C
 	$(CXX) $(CXXFLAGS) $< -o $@  $(LIBS) $(GLIBS)
+	
+%: detector_utils/%.C
+	$(CXX) $(CXXFLAGS) $< -o $@  $(LIBS) $(GLIBS)
 
 
-fOBJ= fission_foil_analyzer.o wave_util/waveprocessing.o
+fOBJ= fission_foil_analyzer.o wave_util/waveprocessing.o detector_utils/fission_detector.o
 
 waveviewer: wave_form_viewer.o
 	$(CXX) $(CXXFLAGS) -o wave_form_viewer $(LIBS) wave_form_viewer.o -L $(LIBS) $(GLIBS) 

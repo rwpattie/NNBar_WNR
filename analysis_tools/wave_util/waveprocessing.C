@@ -108,4 +108,36 @@ Bool_t WaveProcessor::GetThreshold(Int_t nrun, Int_t nchn)
   return kTRUE; 
 }
 
+Int_t WaveProcessor::EventWght(Fadc_Event eve,Int_t *x)
+{
+  
+  Bool_t AboveThr = kFALSE;
+  Int_t npeak = 0;
+  Int_t nch = eve.channel;
+  Int_t current = 0;
+  
+  for(Int_t i = 0 ; i < eve.last ; i++){
+      if(eve.adc[i] < Chan[nch].uthresh && eve.adc[i] > Chan[nch].lthresh){
+	if(AboveThr){
+	  x[npeak] = current;
+	  npeak++;
+	  current = 0;
+	  AboveThr = kFALSE;
+	}
+      }
+      if(eve.adc[i] > Chan[nch].uthresh || eve.adc[i] < Chan[nch].lthresh){
+	if(!AboveThr)
+	  AboveThr = kTRUE;
+	else {
+	    if(eve.adc[i] > current && Chan[nch].uthresh < eve.adc[i])
+		current = eve.adc[i];
+	    else if(eve.adc[i] < current && Chan[nch].lthresh > eve.adc[i])
+		current = eve.adc[i];
+	}
+      }
+  }
+  std::cout << "Found npeaks " << npeak << std::endl;
+  return npeak;
+}
+
 #endif

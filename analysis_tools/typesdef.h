@@ -1,6 +1,12 @@
 #ifndef __TYPES_H__
 #define __TYPES_H__
 
+#define NSAMPLECUT 400
+#define FITHI 650
+#define FITLOW 350
+#define MASSN 939.565378
+#define NCALIB 9.91599e8
+
 struct Wave_Averages_t{
   Double_t RiseTime;
   Double_t Length;

@@ -48,6 +48,7 @@ class WaveProcessor {
       Double_t GetAveWidth() {return WAve.DeltaT;}
       Double_t GetAvePedestal() {return WAve.Pedestal;}
       void     ProcessWave(Fadc_Event eve);
+      Int_t    EventWght(Fadc_Event eve,Int_t *x);
       Int_t    CalculatePreTrigger(Fadc_Event eve,Int_t nc);
       Int_t    TimeToPeak(Fadc_Event eve,Int_t trgsample=0);
       Bool_t   GetThreshold(Int_t nrun,Int_t nchn);
