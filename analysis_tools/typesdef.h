@@ -1,11 +1,12 @@
 #ifndef __TYPES_H__
 #define __TYPES_H__
 
-#define NSAMPLECUT 400
+#define NSAMPLECUT 400 // Sample cut for the fission chamber ADC
 #define FITHI 650
 #define FITLOW 350
-#define MASSN 939.565378
-#define NCALIB 9.91599e8
+#define MASSN 939.565378 //neutron mass in MeV
+#define NCALIB 9.91599e8 //number of micropulses in the Cabibration Run
+#define DTIME 16e-3
 
 struct Wave_Averages_t{
   Double_t RiseTime;

@@ -36,7 +36,9 @@ MYOS := $(subst -,,$(shell uname))
 	$(CXX) $(CXXFLAGS) $< -o $@  $(LIBS) $(GLIBS)
 
 
-fOBJ= fission_foil_analyzer.o wave_util/waveprocessing.o detector_utils/fission_detector.o
+fOBJ= fission_foil_analyzer.o wave_util/waveprocessing.o detector_utils/fission_detector.o\
+      detector_utils/gastube_detector.o
+      
 
 waveviewer: wave_form_viewer.o
 	$(CXX) $(CXXFLAGS) -o wave_form_viewer $(LIBS) wave_form_viewer.o -L $(LIBS) $(GLIBS) 

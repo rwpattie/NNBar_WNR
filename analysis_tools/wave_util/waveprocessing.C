@@ -104,6 +104,9 @@ Bool_t WaveProcessor::GetThreshold(Int_t nrun, Int_t nchn)
 	  Chan[nchn].post    = atoi(row->GetField(3));
       }
   }
+  std::cout << "Channel info" << nchn << std::endl;
+  std::cout << "---------------------------------------------"<<std::endl;
+  std::cout << "pre-trigger " << Chan[nchn].pre << std::endl;
   
   return kTRUE; 
 }
@@ -136,7 +139,8 @@ Int_t WaveProcessor::EventWght(Fadc_Event eve,Int_t *x)
 	}
       }
   }
-  std::cout << "Found npeaks " << npeak << std::endl;
+  //std::cout << "Found npeaks " << npeak << std::endl;
+  npeak = 1;
   return npeak;
 }
 
