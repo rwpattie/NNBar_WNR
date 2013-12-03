@@ -1,6 +1,6 @@
 #! /bin/bash
 
-fname=file_list.txt
+fname=file_list_10_2013.txt
 
 exec<$fname
 value = 0

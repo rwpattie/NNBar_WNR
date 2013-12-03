@@ -23,6 +23,10 @@ struct Fadc_Event {
   Int_t     packet_time_us;
   Int_t     packet_time_l;
   Int_t     board;
+  UInt_t    cycle;
+  Double_t  trigger;
+  Double_t  riseTime;
+  Double_t  width;
   UShort_t  last;
   UShort_t  adc[5000];
   UShort_t  max;

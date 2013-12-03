@@ -1,413 +1,144 @@
-180, 1359441725, 1359441735, 10, Pulser Testing Analyzer , , , , , , , , 
-181, 1359443117, 1359443126, 9, Pulser Testing Analyzer , , , , , , , , 
-182, 1359494014, 1359494022, 8, Pulser Testing Analyzer , , , , , , , , 
-183, 1359495098, 1359495107, 9, Pulser Testing Analyzer , , , , , , , , 
-184, 1359504166, 1359504275, 109, Pulser Testing Analyzer , , , , , , , , 
-185, 1359504301, 1359504306, 5, Pulser Testing Analyzer , , , , , , , , 
-186, 1359504519, 1359504522, 3, Pulser Testing Analyzer , , , , , , , , 
-187, 1359505936, 1359505941, 5, Pulser Testing Analyzer , , , , , , , , 
-188, 1359506304, 1359506314, 10, Pulser Testing Analyzer , , , , , , , , 
-189, 1359506400, 1359506404, 4, Pulser Testing Analyzer , , , , , , , , 
-190, 1359506424, 1359506426, 2, Pulser Testing Analyzer , , , , , , , , 
-191, 1359506572, 1359506576, 4, Pulser Testing Analyzer , , , , , , , , 
-192, 1359506687, 1359506821, 134, Pulser Testing Analyzer , , , , , , , , 
-193, 1359509063, 1359509070, 7, Pulser Testing Analyzer , , , , , , , , 
-194, 1359511779, 1359511796, 17, Pulser Testing Analyzer , , , , , , , , 
-195, 1359513106, 1359513112, 6, Pulser Testing Analyzer , , , , , , , , 
-196, 1359514830, 1359514868, 38, Pulser Testing Analyzer , , , , , , , , 
-197, 1359515220, 1359515226, 6, Pulser Testing Analyzer , , , , , , , , 
-198, 1359526222, 1359526250, 28, Pulser Testing Analyzer , , , , , , , , 
-199, 1359526685, 1359526742, 57, Pulser Testing Analyzer , , , , , , , , 
-200, 1359527418, 0, -1359527418, Pulser Testing Analyzer , , , , , , , , 
-201, 1359527733, 1359527988, 255, Pulser Testing Analyzer , , , , , , , , 
-202, 1359528013, 1359528018, 5, Pulser Testing Analyzer , , , , , , , , 
-203, 1359528143, 1359528171, 28, Pulser Testing Analyzer , , , , , , , , 
-204, 1359528278, 1359528295, 17, Pulser Testing Analyzer , , , , , , , , 
-205, 1359528428, 1359528444, 16, Pulser Testing Analyzer , , , , , , , , 
-206, 1359528631, 1359528648, 17, Pulser Testing Analyzer , , , , , , , , 
-207, 1359528703, 1359528716, 13, Pulser Testing Analyzer , , , , , , , , 
-208, 1359529057, 1359529079, 22, Pulser Testing Analyzer , , , , , , , , 
-209, 1359529143, 1359529160, 17, Pulser Testing Analyzer , , , , , , , , 
-210, 1359531832, 1359531858, 26, Pulser Testing Analyzer , , , , , , , , 
-211, 1359531953, 1359531966, 13, Pulser Testing Analyzer , , , , , , , , 
-212, 1359535800, 1359535814, 14, Pulser Testing Analyzer , , , , , , , , 
-213, 1359590150, 1359590162, 12, Pulser Testing Analyzer , , , , , , , , 
-214, 1359590248, 1359590263, 15, Pulser Testing Analyzer , , , , , , , , 
-216, 1359599300, 1359599317, 17, Pulser Testing Analyzer , , , , , , , , 
-218, 1359599543, 1359599562, 19, Pulser Testing Analyzer , , , , , , , , 
-219, 1359599670, 1359599694, 24, Pulser Testing Analyzer , , , , , , , , 
-221, 1359611458, 1359611478, 20, Pulser Testing Analyzer , , , , , , , , 
-222, 1359611549, 1359611562, 13, Pulser Testing Analyzer , , , , , , , , 
-223, 1359611633, 1359611644, 11, Pulser Testing Analyzer , , , , , , , , 
-224, 1359611729, 1359611740, 11, Pulser Testing Analyzer , , , , , , , , 
-225, 1359611787, 1359611796, 9, Pulser Testing Analyzer , , , , , , , , 
-226, 1359611991, 1359612000, 9, Pulser Testing Analyzer , , , , , , , , 
-227, 1359612259, 1359612270, 11, Pulser Testing Analyzer , , , , , , , , 
-228, 1359612281, 1359612291, 10, Pulser Testing Analyzer , , , , , , , , 
-229, 1359616535, 1359616553, 18, Pulser Testing Analyzer , , , , , , , , 
-230, 1359669429, 1359669433, 4, 6 tube test , , , , , , , , 
-231, 1359669785, 1359669793, 8, 6 tube test , , , , , , , , 
-232, 1359669843, 1359669850, 7, 6 tube test , , , , , , , , 
-233, 1359669921, 1359669928, 7, 6 tube test , , , , , , , , 
-234, 1359670132, 1359670189, 57, 6 tube test , , , , , , , , 
-235, 1359670388, 1359670498, 110, 6 tube test , , , , , , , , 
-236, 1359674446, 1359674979, 533, 6 tube test , , , , , , , , 
-237, 1359678643, 1359678743, 100, 6 tube test , , , , , , , , 
-238, 1359678803, 1359678826, 23, 6 tube test , , , , , , , , 
-239, 1359679969, 1359680008, 39, 6 tube test , , , , , , , , 
-240, 1359680109, 1359680144, 35, 6 tube test , , , , , , , , 
-241, 1359680235, 1359680288, 53, 6 tube test , , , , , , , , 
-242, 1359681138, 1359681181, 43, 6 tube test , , , , , , , , 
-243, 1359681454, 1359681483, 29, 6 tube test , , , , , , , , 
-244, 1359681767, 1359681779, 12, 6 tube test , , , , , , , , 
-245, 1359682352, 1359682387, 35, 6 tube test , , , , , , , , 
-246, 1359682548, 1359682569, 21, 6 tube test , , , , , , , , 
-247, 1359682641, 1359682700, 59, 6 tube test , , , , , , , , 
-248, 1359682735, 1359682864, 129, 6 tube test , , , , , , , , 
-249, 1359683261, 1359683277, 16, 6 tube test , , , , , , , , 
-250, 1359683324, 1359683348, 24, 6 tube test , , , , , , , , 
-251, 1359685214, 1359685266, 52, 6 tube test , , , , , , , , 
-252, 1359685344, 1359685410, 66, 6 tube test , , , , , , , , 
-253, 1359685529, 1359685536, 7, 6 tube test , , , , , , , , 
-254, 1359687656, 1359687803, 147, 6 tube test , , , , , , , , 
-255, 1359689869, 1359689933, 64, 6 tube test , , , , , , , , 
-256, 1359690060, 1359690064, 4, 6 tube test , , , , , , , , 
-257, 1359690090, 1359690148, 58, 6 tube test , , , , , , , , 
-258, 1359690386, 1359690417, 31, 6 tube test , , , , , , , , 
-259, 1359690727, 1359690763, 36, 6 tube test , , , , , , , , 
-260, 1359694276, 1359694282, 6, 6 tube test , , , , , , , , 
-261, 1359694319, 1359694328, 9, 6 tube test , , , , , , , , 
-262, 1359694467, 1359694473, 6, 6 tube test , , , , , , , , 
-263, 1359694534, 1359694538, 4, 6 tube test , , , , , , , , 
-264, 1359694573, 1359694581, 8, 6 tube test , , , , , , , , 
-265, 1359694908, 1359694915, 7, 6 tube test , , , , , , , , 
-266, 1359694973, 1359694981, 8, 6 tube test , , , , , , , , 
-267, 1359695490, 1359695498, 8, 6 tube test , , , , , , , , 
-268, 1359695570, 1359695574, 4, 6 tube test , , , , , , , , 
-269, 1359696048, 1359696054, 6, 6 tube test , , , , , , , , 
-270, 1359697006, 1359697015, 9, 6 tube test , , , , , , , , 
-271, 1359699518, 1359699593, 75, 6 tube test , , , , , , , , 
-272, 1359701781, 1359701897, 116, 6 tube test , , , , , , , , 
-273, 1359728572, 1359728644, 72, 6 tube test , , , , , , , , 
-274, 1359730394, 1359730417, 23, 6 tube test , , , , , , , , 
-275, 1359731443, 0, -1359731443, 6 tube test , , , , , , , , 
-277, 1359731966, 1359732035, 69, 6 tube test , , , , , , , , 
-278, 1359865543, 1359865590, 47, WNR Setup DAQ test , , , , , , , , 
-279, 1359865950, 1359866011, 61, WNR Setup DAQ test , , , , , , , , 
-280, 1359866257, 1359866328, 71, WNR Setup DAQ (periodic polling) , , , , , , , , 
-281, 1359866372, 1359866394, 22, WNR Setup DAQ (triggering) , , , , , , , , 
-282, 1359866648, 1359866679, 31, WNR Setup DAQ (triggering) with acquire bit on H-GX pulse , , , , , , , , 
-283, 1359866828, 1359866903, 75, WNR Setup DAQ (triggering) H-GX reset and periodic polling on other brds , , , , , , , , 
-284, 1359956689, 1359956713, 24, Drift tube background run 26 ft from fission foil , , , , , , , , 
-285, 1359956880, 1359956990, 110, Drift tube background run 26 ft from fission foil , , , , , , , , 
-286, 1359957163, 1359957238, 75, Drift tube background run 26 ft from fission foil , , , , , , , , 
-287, 1359957572, 1359957672, 100, Drift tube background run 26 ft from fission foil , , , , , , , , 
-288, 1359958178, 1359958255, 77, Drift tube background run 26 ft from fission foil , , , , , , , , 
-289, 1360111913, 1360111926, 13, Drift tube background run 26 ft from fission foil , , , , , , , , 
-290, 1360111960, 1360112076, 116, Drift tube background run 26 ft from fission foil , , , , , , , , 
-291, 1360273111, 1360273139, 28, Drift tube background run 26 ft from fission foil , , , , , , , , 
-292, 1360273424, 1360273498, 74, Drift tube background run 26 ft from fission foil , , , , , , , , 
-293, 1360356081, 1360356130, 49, Drift tube background run 26 ft from fission foil , , , , , , , , 
-294, 1360356267, 1360356298, 31, Drift tube background run 26 ft from fission foil , , , , , , , , 
-295, 1360356615, 1360356627, 12, Pedestal and offset check, 1/2 turn cw from initial , , , , , , , , 
-296, 1360356710, 1360356714, 4, Pedestal and offset check, 1/2 turn cw from initial , , , , , , , , 
-298, 1360356950, 1360356958, 8, Pedestal and offset check, 1/2 turn cw from initial , , , , , , , , 
-299, 1360357090, 1360357099, 9, Pedestal and offset check, 3/2 turn cw from initial,upper-4000 , , , , , , , , 
-300, 1360357122, 1360357136, 14, Pedestal and offset check, 3/2 turn cw from initial,upper-4000 , , , , , , , , 
-301, 1360357160, 1360357173, 13, Pedestal and offset check, 3/2 turn cw from initial,upper-2500 , , , , , , , , 
-302, 1360357245, 1360357264, 19, Pedestal and offset check, 2 turns cw from initial,upper-2500 , , , , , , , , 
-303, 1360357331, 1360357336, 5, Pedestal and offset check, 2 turns cw from initial,upper-2500 , , , , , , , , 
-304, 1360357434, 1360357451, 17, Pedestal and offset check, 3 turns cw from initial,upper-2200 , , , , , , , , 
-305, 1360357589, 1360357622, 33, Pedestal and offset check, 3 turns cw from initial,upper-2200 , , , , , , , , 
-306, 1360357706, 1360357827, 121, Pedestal and offset check, 3 turns cw from initial,upper-2200 , , , , , , , , 
-307, 1360358052, 1360358065, 13, Pedestal and offset check, 5 turns cw from initial,upper-2200 , , , , , , , , 
-308, 1360358116, 1360358122, 6, Pedestal and offset check, 5 turns cw from initial,upper-2200 , , , , , , , , 
-309, 1360358154, 1360358171, 17, Pedestal and offset check, 7 turns cw from initial,upper-1000 , , , , , , , , 
-310, 1360358204, 1360358265, 61, Pedestal and offset check, 7 turns cw from initial,upper-800 , , , , , , , , 
-311, 1360358375, 1360358689, 314, Pedestal and offset check, 7 turns cw from initial,upper-800 , , , , , , , , 
-312, 1360358850, 1360358869, 19, Pedestal and offset check, 7 turns cw from initial,upper-800 , , , , , , , , 
-313, 1360358987, 1360359034, 47, Pedestal and offset check, 7 turns cw from initial,upper-800 , , , , , , , , 
-314, 1360359828, 1360359848, 20, Channel 1 vs. 2 Rate Check increaseing the F/G on channel 1 of the TFA , , , , , , , , 
-315, 1360359966, 1360359991, 25, Channel 1 vs. 2 Rate Check increaseing the F/G on channel 1 of the TFA , , , , , , , , 
-316, 1360360448, 1360360539, 91, Channel 1 vs. 2 Rate Check increaseing the F/G on channel 1 of the TFA , , , , , , , , 
-317, 1360360853, 1360360858, 5, Channel 1 vs. 2 Rate Check increaseing the F/G on channel 1 of the TFA , , , , , , , , 
-318, 1360360916, 1360360935, 19, Channel 1 vs. 2 Rate Check increaseing the F/G on channel 1 of the TFA , , , , , , , , 
-319, 1360361196, 0, -1360361196, Rate check wit , , , , , , , , 
-320, 1360361625, 1360361632, 7, Rate check wit , , , , , , , , 
-321, 1360366665, 1360366685, 20, 6 tube test , , , , , , , , 
-322, 1360366775, 1360366829, 54, 6 tube test , , , , , , , , 
-323, 1360367921, 1360367959, 38, 6 tube test , , , , , , , , 
-324, 1360369017, 1360369069, 52, 6 tube test , , , , , , , , 
-325, 1360544777, 1360544803, 26, 6 tube test , , , , , , , , 
-326, 1360544928, 1360544959, 31, periodic testing , , , , , , , , 
-327, 1360545405, 1360545474, 69, periodic testing , , , , , , , , 
-328, 1360545570, 1360545592, 22, periodic testing , , , , , , , , 
-329, 1360545904, 1360545919, 15, periodic testing , , , , , , , , 
-330, 1360546566, 1360546606, 40, testing channels 1 and 2 , , , , , , , , 
-331, 1360549089, 1360549428, 339, testing channels 1 and 2 , , , , , , , , 
-332, 1360549781, 1360549848, 67, gain testing drift tubes , , , , , , , , 
-333, 1360550339, 1360550384, 45, gain testing drift tubes , , , , , , , , 
-334, 1360557989, 1360558040, 51, gain testing drift tubes , , , , , , , , 
-335, 1360559003, 1360559011, 8, gain testing drift tubes , , , , , , , , 
-336, 1360559099, 1360559133, 34, gain testing drift tubes , , , , , , , , 
-337, 1360559258, 1360559334, 76, gain testing drift tubes , , , , , , , , 
-338, 1360560684, 1360560748, 64, gain testing drift tubes , , , , , , , , 
-339, 1360566989, 1360567023, 34, beam pulse digitized , , , , , , , , 
-340, 1360567051, 1360567095, 44, beam pulse digitized , , , , , , , , 
-341, 1360567132, 1360567194, 62, beam pulse digitized , , , , , , , , 
-342, 1360567228, 1360567395, 167, beam pulse digitized , , , , , , , , 
-343, 1360567485, 1360567684, 199, beam pulse digitized , , , , , , , , 
-344, 1360567753, 1360567861, 108, beam pulse digitized , , , , , , , , 
-345, 1360567866, 1360568037, 171, beam pulse digitized , , , , , , , , 
-346, 1360568245, 1360568696, 451, beam pulse digitized , , , , , , , , 
-347, 1360568731, 1360568931, 200, beam pulse digitized , , , , , , , , 
-348, 1360568973, 1360569130, 157, beam pulse digitized , , , , , , , , 
-349, 1360569149, 1360569367, 218, beam pulse digitized , , , , , , , , 
-350, 1360569436, 1360569815, 379, beam pulse digitized , , , , , , , , 
-351, 1360570222, 1360570353, 131, beam pulse digitized , , , , , , , , 
-352, 1360594732, 1360595355, 623, Shutter closed , , , , , , , , 
-353, 1360596067, 1360596604, 537, Shutter closed , , , , , , , , 
-354, 1360596838, 1360597087, 249, Shutter open (BF3 center) , , , , , , , , 
-355, 1360598217, 1360598680, 463, Shutter open (BF3 center) , , , , , , , , 
-356, 1360600655, 1360600722, 67, Shutter open (BF3 center) , Fission Chamber TAC , Fission Chamber Pulse Heigth , , , , , , Micropulse Gate 
-357, 1360601393, 1360601453, 60, Fission foil tests. , Fission Chamber TAC , Fission Chamber Pulse Heigth , , , , , , Micropulse Gate 
-358, 1360601708, 1360601761, 53, Fission foil tests Gain of x4 , Fission Chamber TAC , Fission Chamber Pulse Heigth , , , , , , Micropulse Gate 
-359, 1360601943, 1360601991, 48, Fission foil tests Gain of x4 , Fission Chamber TAC , Fission Chamber Pulse Heigth , , , , , , Micropulse Gate 
-360, 1360602117, 1360602139, 22, Fission foil tests Gain of x4 , Fission Chamber TAC , Fission Chamber Pulse Heigth , , , , , , Micropulse Gate 
-361, 1360602197, 1360602235, 38, Fission foil tests Gain of x4 , Fission Chamber TAC , Fission Chamber Pulse Heigth , , , , , , Micropulse Gate 
-362, 1360602305, 1360602335, 30, Fission foil tests Gain of x4 , Fission Chamber TAC , Fission Chamber Pulse Heigth , , , , , , Micropulse Gate(off) 
-363, 1360602547, 1360602567, 20, Fission foil tests Gain of x4 , Fission Chamber TAC , Fission Chamber Pulse Heigth , , , , , , Micropulse Gate(off) 
-364, 1360602777, 1360602826, 49, Fission foil tests Gain of x4 , Fission Chamber TAC , Fission Chamber Pulse Heigth , , , , , , Micropulse Gate(off) 
-365, 1360603184, 1360603260, 76, Fission foil tests , Fission Chamber TAC , Fission Chamber Pulse Heigth , , , , , , Micropulse Gate(off) 
-366, 1360603297, 1360603310, 13, Fission foil tests , Fission Chamber TAC , Fission Chamber Pulse Heigth , , , , , , Micropulse Gate(off) 
-367, 1360603839, 1360603867, 28, Fission foil tests , Fission Chamber TAC , Fission Chamber Pulse Heigth , , , , , , Micropulse Gate 
-368, 1360604047, 1360604056, 9, Test of logger , Fission Chamber TAC , Fission Chamber Pulse Heigth , , , , , , Micropulse Gate 
-369, 1360608248, 0, -1360608248, Background measurement shutter closd , Fission Chamber TAC , Fission Chamber Pulse Heigth , , , , , , Micropulse Gate 
-370, 1360611810, 1360611830, 20, test run , Ar/Ethane Tube #1 , , , , , , , Micropulse Gate 
-371, 1360612605, 1360612678, 73, Background test tube #1 , Ar/Ethane Tube #1 , , , , , , , Micropulse Gate 
-372, 1360613523, 1360613565, 42, Background test tube #1 , Ar/Ethane Tube #1 , , , , , , , Micropulse Gate 
-373, 1360613575, 1360613876, 301, Background test tube #1 , Ar/Ethane Tube #1 , , , , , , , Micropulse Gate 
-374, 1360614472, 1360614542, 70, Background test #2 tube #1 , Ar/Ethane Tube #1 , , , , , , , Micropulse Gate 
-375, 1360614560, 1360615100, 540, Background test #2 tube #1 , Ar/Ethane Tube #1 , , , , , , , Micropulse Gate 
-376, 1360615403, 1360615466, 63, data writing test , Ar/Ethane Tube #1 , , , , , , , Micropulse Gate 
-377, 1360615573, 1360615930, 357, Background test #3 tube #1 , Ar/Ethane Tube #1 , , , , , , , Micropulse Gate 
-378, 1360616038, 1360616240, 202, Short Beam Test #1 Tube #1 , Ar/Ethane Tube #1 , , , , , , , Micropulse Gate 
-379, 1360616627, 1360616817, 190, Short Beam Test #2 Tube #1 , Ar/Ethane Tube #1 , , , , , , , Micropulse Gate 
-380, 1360616931, 1360617874, 943, Background after beam test #1 Tube #1 , Ar/Ethane Tube #1 , , , , , , , Micropulse Gate 
-381, 1360619431, 1360619984, 553, Long Beam Test #1 Tube #1 , Ar/Ethane Tube #1 , , , , , , , Micropulse Gate 
-382, 1360620111, 1360622099, 1988, Long Beam Test #2 Tube #1 , Ar/Ethane Tube #1 , , , , , , , Micropulse Gate 
-383, 1360622982, 1360624029, 1047, Background after beam test #2 Tube #1 , Ar/Ethane Tube #1 , , , , , , , Micropulse Gate 
-384, 1360624750, 1360625659, 909, Background test #1 Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-385, 1360626042, 1360626700, 658, Long Beamt Test #1 Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-386, 1360626768, 1360626879, 111, Long Beamt Test #1 Tube #2 Attempt #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-387, 1360626898, 1360627834, 936, Long Beamt Test #1 Tube #2 Attempt #3 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-388, 1360628249, 1360628276, 27, Long Beamt Test #1 Tube #2 Attempt #3 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-389, 1360628309, 1360628345, 36, Long Beamt Test #1 Tube #2 Attempt #3 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-390, 1360628399, 1360631079, 2680, Long Beamt Test #1 Tube #2 Attempt #4 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-391, 1360631143, 1360632117, 974, Background after beam test #1 Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-392, 1360632784, 1360634622, 1838, Long Beam test #2 Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-393, 1360635341, 1360635354, 13, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-394, 1360635495, 1360635509, 14, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-395, 1360635677, 1360635684, 7, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-396, 1360635796, 1360635812, 16, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-397, 1360635849, 1360635864, 15, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-398, 1360635942, 1360635948, 6, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-399, 1360636005, 1360636020, 15, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-400, 1360636192, 1360636201, 9, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-401, 1360636278, 1360636287, 9, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-403, 1360636426, 1360636534, 108, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-404, 1360636630, 1360636641, 11, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-405, 1360636671, 1360636680, 9, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-406, 1360636752, 1360636763, 11, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-407, 1360636817, 1360636828, 11, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-408, 1360636887, 1360636899, 12, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-409, 1360636929, 1360636983, 54, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-411, 1360637211, 1360637220, 9, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-412, 1360637291, 1360637312, 21, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-413, 1360637368, 1360638006, 638, Background Tube #2 , Ar/Ethane Tube #2 , , , , , , , Micropulse Gate 
-414, 1360638828, 1360639401, 573, Background Tube #3 , Ar/Ethane Tube #3 , , , , , , , Micropulse Gate 
-415, 1360640591, 1360649519, 8928, Long Beam Test #1 Tube #3 , Ar/Ethane Tube #3 , , , , , , , Micropulse Gate 
-416, 1360650138, 1360650166, 28, Test of the new Analyzer , Ar/Ethane Tube #3 , , , , , , , Micropulse Gate 
-417, 1360651154, 1360651184, 30, Background before beam Ar/Ethane Tube #6 , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-418, 1360651267, 1360651290, 23, DAQ Test , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-419, 1360651441, 1360651459, 18, DAQ Test , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-420, 1360651550, 1360651606, 56, DAQ Test , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-421, 1360651740, 1360651752, 12, DAQ Test , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-422, 1360651830, 1360651838, 8, DAQ Test , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-423, 1360651904, 1360652006, 102, DAQ Test , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-424, 1360652019, 1360652026, 7, DAQ Test , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-425, 1360652074, 1360652101, 27, DAQ Test , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-426, 1360652228, 1360652288, 60, DAQ Test , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-427, 1360652416, 1360652736, 320, Background before beam Ar/Ethane Tube #6 , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-428, 1360652791, 1360652890, 99, DAQ Test , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-429, 1360652937, 1360652974, 37, DAQ Test , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-430, 1360653009, 1360653029, 20, DAQ Test , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-431, 1360653146, 1360653166, 20, DAQ Test , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-432, 1360653237, 1360653525, 288, DAQ Test , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-433, 1360653620, 1360654666, 1046, Long Beam Test #1 Tube #6 , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-434, 1360655392, 0, -1360655392, Long Beam Test #1 Tube #6 increased gain threshold to 850 , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-435, 1360655425, 1360655441, 16, Long Beam Test #1 Tube #6 increased gain threshold to 850 , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-436, 1360655597, 1360655632, 35, Long Beam Test #1 Tube #6 increased gain threshold to 850 , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-437, 1360655801, 1360655815, 14, Long Beam Test #1 Tube #6 increased gain threshold to 850 , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-438, 1360655935, 1360681323, 25388, Long Beam Test #1 Tube #6 increased gain threshold to 850 , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-439, 1360681709, 1360682378, 669, background after 7 hour run Tube #6 , Ar/Ethane Tube #6 , , , , , , , Micropulse Gate 
-440, 1360686917, 1360686968, 51, beam test run Tube #4 , Ar/Ethane Tube #4 , , , , , , , Micropulse Gate 
-441, 1360688072, 1360689972, 1900, long beam test #1 Tube #4 , Ar/Ethane Tube #4 , , , , , , , Micropulse Gate 
-443, 1360691647, 1360692248, 601, background after 30 minute run Tube #5 , Ar/Ethane Tube #5 , , , , , , , Micropulse Gate 
-444, 1360696120, 1360696752, 632, prebeam background Tube #5 , Ar/Ethane Tube #5 , , , , , , , Micropulse Gate 
-446, 1360702029, 1360703831, 1802, Long Beam Test #1 Tube #5 , Ar/Ethane Tube #5 , , , , , , , Micropulse Gate 
-448, 1360704182, 1360705512, 1330, Background Test Post Run #1 Tube #5 , Ar/Ethane Tube #5 , , , , , , , Micropulse Gate 
-449, 1360705903, 1360707779, 1876, Beam Test Run #2 Tube #5 , Ar/Ethane Tube #5 , , , , , , , Micropulse Gate 
-450, 1360708064, 1360708842, 778, Post Beam Test #2 Background Tube #5 , Ar/Ethane Tube #5 , , , , , , , Micropulse Gate 
-451, 1360709555, 1360710813, 1258, Background Test #1 Tube #7 , Ar/CF4 Tube #7 , , , , , , , Micropulse Gate 
-452, 1360711229, 1360711824, 595, Short Beam Test #1 Tube #7, no CH#7 , Ar/CF4 Tube #7 , , , , , , , Micropulse Gate 
-453, 1360711878, 1360713733, 1855, Short Beam Test #1 Tube #7 , Ar/CF4 Tube #7 , , , , , , , Micropulse Gate 
-454, 1360713831, 1360714493, 662, Short Beam Test #1 Tube #7 No CH#7 , Ar/CF4 Tube #7 , , , , , , , Micropulse Gate 
-455, 1360714775, 1360714925, 150, Post Beam Test #1 Tube #7 No CH#7 , Ar/CF4 Tube #7 , , , , , , , Micropulse Gate 
-456, 1360714954, 1360715031, 77, Post Beam Test #2 Tube #7 No CH#7 , Ar/CF4 Tube #7 , , , , , , , Micropulse Gate 
-457, 1360715061, 1360715078, 17, Post Beam Test #2 Tube #7 No CH#7 trigger mask set to 4 , Ar/CF4 Tube #7 , , , , , , , Micropulse Gate 
-458, 1360715206, 1360715271, 65, Post Beam Test #2 Tube #7 No CH#7 settings restored , Ar/CF4 Tube #7 , , , , , , , Micropulse Gate 
-459, 1360715369, 1360715990, 621, Post Beam Test #2 Tube #7 No CH#7 , Ar/CF4 Tube #7 , , , , , , , Micropulse Gate 
-460, 1360716034, 1360716206, 172, Post Beam Test #2 Tube #7 No CH#7 , Ar/CF4 Tube #7 , , , , , , , Micropulse Gate 
-461, 1360716423, 1360718277, 1854, Beam Test #3 Tube #7 No CH#7 , Ar/CF4 Tube #7 , , , , , , , Micropulse Gate 
-462, 1360719500, 1360719805, 305, Background before beam Tubes #6,7 , Micropulse Gate , , , , , , Ar/CH4 Tube #6 , Ar/CF4 Tube #7 
-464, 1360720263, 1360721235, 972, Long beam test Tubes #6,7 , Micropulse Gate , , , , , , Ar/CH4 Tube #6 , Ar/CF4 Tube #7 
-465, 1360721302, 1360721414, 112, Long beam test Tubes #6,7 , Micropulse Gate , , , , , , Ar/CH4 Tube #6 , Ar/CF4 Tube #7 
-466, 1360721503, 1360721528, 25, Long beam test Tubes #6,7 , Micropulse Gate , , , , , , Ar/CH4 Tube #6 , Ar/CF4 Tube #7 
-467, 1360721564, 1360721900, 336, Long beam test Tubes #6,7 , Micropulse Gate , , , , , , Ar/CH4 Tube #6 , Ar/CF4 Tube #7 
-468, 1360724625, 1360726619, 1994, Long beam test Tubes #6,7 , Micropulse Gate , , , , , , Ar/CH4 Tube #6 , Ar/CF4 Tube #7 
-470, 1360727213, 1360727254, 41, Background after first beam Tubes #6,7 , Micropulse Gate , , , , , , Ar/CH4 Tube #6 , Ar/CF4 Tube #7 
-471, 1360727263, 1360727311, 48, Background after first beam Tubes #6,7 , Micropulse Gate , , , , , , Ar/CH4 Tube #6 , Ar/CF4 Tube #7 
-472, 1360727333, 1360727387, 54, Background after first beam Tubes #6,7 , Micropulse Gate , , , , , , Ar/CH4 Tube #6 , Ar/CF4 Tube #7 
-473, 1360727470, 1360727590, 120, Background after first beam Tubes #6,7 , Micropulse Gate , , , , , , Ar/CH4 Tube #6 , Ar/CF4 Tube #7 
-474, 1360730144, 1360730529, 385, Background after first beam Tubes #5,7 , Micropulse Gate , , , , , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-476, 1360730771, 1360731087, 316, Background before first beam Tubes #5,7 , Micropulse Gate , , , , , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-478, 1360731522, 1360733334, 1812, Long Beam Test Tubes #5,7 , Micropulse Gate , , , , , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-480, 1360733758, 1360734286, 528, Background after first beam Tubes #5,7 , Micropulse Gate , , , , , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-482, 1360734773, 1360736821, 2048, Long Beam Test #2 Tubes #5,7 , Micropulse Gate , , , , , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-483, 1360736925, 1360736964, 39, Background test after beam #2 Tubes #5,7 , Micropulse Gate , , , , , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-485, 1360737049, 1360737356, 307, Background test after beam #2 Tubes #5,7 , Micropulse Gate , , , , , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-487, 1360737964, 1360738024, 60, Test all tubes (no 6) , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-488, 1360738037, 1360738091, 54, Test all tubes (no 6) , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-489, 1360738096, 1360738240, 144, Test all tubes (no 6) , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-491, 1360738652, 1360738872, 220, Overnight Beam Test all tubes (not 6) , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-493, 1360738940, 1360776614, 37674, Overnight Beam Test all tubes (not 6) , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-494, 1360776948, 1360778809, 1861, Background after Allnight Beam Test all tubes (not 6) , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-495, 1360779507, 1360780528, 1021, Beam Test all tubes (not 6) with film , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-496, 1360782155, 1360782331, 176, Background before beam Gate Generator Test (1.7us) , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-499, 1360783020, 1360784823, 1803, Beam Test (1.7us pulse) CF4 tube in front , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-500, 1360785241, 1360785549, 308, Background after Beam Test (1.7us pulse) CF4 tube in front , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-502, 1360785863, 1360785906, 43, Beam Test #2 (1.7us pulse) CF4 tube in front , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-504, 1360786166, 1360786403, 237, Beam Test #2 (1.7us pulse) CF4 tube in front , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-505, 1360786861, 1360786881, 20, Beam Test #2 (1.7us pulse) CF4 tube in front , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-506, 1360788053, 1360788802, 749, Beam Test #2 (1.7us pulse) CF4 tube in front short timing , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , , Ar/CF4 Tube #7 
-507, 1360789481, 1360789511, 30, Test of the fission fiol TAC and ADC , , , , , , , FIssion foil ADC , Fission foil TAC 
-508, 1360790170, 1360790192, 22, Test of the fission fiol TAC and ADC , , , , , , , FIssion foil ADC , Fission foil TAC 
-509, 1360790337, 1360790383, 46, Test of the fission fiol TAC and ADC , , , , , , , FIssion foil ADC , Fission foil TAC 
-510, 1360790642, 1360791712, 1070, Test of the fission fiol TAC and ADC 1ms gate , , , , , , , FIssion foil ADC , Fission foil TAC 
-511, 1360791974, 1360792027, 53, Test of the fission fiol TAC and ADC 1ms gate , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , FIssion foil ADC , Fission foil TAC 
-512, 1360792379, 1360792411, 32, background test of triggering on chn2-3 , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , FIssion foil ADC , Fission foil TAC 
-513, 1360792502, 1360792513, 11, background test of triggering on chn2-3 , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , FIssion foil ADC , Fission foil TAC 
-514, 1360792737, 1360792761, 24, background test of triggering on chn2-3 , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , FIssion foil ADC , Fission foil TAC 
-515, 1360792819, 1360792951, 132, Test of the fission fiol TAC and ADC 1ms gate with tubes , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 not working , Ar/CH4 Tube #3 not working , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , FIssion foil ADC , Fission foil TAC 
-516, 1360793164, 1360793170, 6, Test , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 not working , Ar/CH4 Tube #3 not working , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , FIssion foil ADC , Fission foil TAC 
-517, 1360793235, 1360793248, 13, Test , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 not working , Ar/CH4 Tube #3 not working , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , FIssion foil ADC , Fission foil TAC 
-518, 1360793428, 1360793456, 28, Test , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 not working , Ar/CH4 Tube #3 not working , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , FIssion foil ADC , Fission foil TAC 
-519, 1360793535, 1360793541, 6, Test , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 not working , Ar/CH4 Tube #3 not working , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , FIssion foil ADC , Fission foil TAC 
-520, 1360793642, 1360797305, 3663, Fission foil tests with detector array , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 not working , Ar/CH4 Tube #3 not working , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , FIssion foil ADC , Fission foil TAC 
-521, 1360797566, 1360799572, 2006, Detector array background post beam test #1 , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 not working , Ar/CH4 Tube #3 not working , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , FIssion foil ADC , Fission foil TAC 
-523, 1360799734, 1360799842, 108, Detector array background #2 post beam test #1 , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 not working , Ar/CH4 Tube #3 not working , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , FIssion foil ADC , Fission foil TAC 
-524, 1360799901, 1360799936, 35, Detector array background #3 post beam test #1 , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 not working , Ar/CH4 Tube #3 not working , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , FIssion foil ADC , Fission foil TAC 
-526, 1360800054, 1360800864, 810, Detector array background #4 post beam test #1 , Micropulse Gate , Ar/CH4 Tube #1 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , FIssion foil ADC , Fission foil TAC 
-528, 1360801788, 1360804196, 2408, Detector array background #4 post beam test #1 , Micropulse Gate , Ar/CF4 Tube #7 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , FIssion foil ADC , Fission foil TAC 
-529, 1360805643, 1360805732, 89, PMT front of the drift tube array. , Micropulse Gate , Ar/CF4 Tube #7 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , PMT , Fission foil TAC 
-530, 1360806084, 1360806779, 695, PMT front of the drift tube array. , Micropulse Gate , Ar/CF4 Tube #7 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , PMT , Fission foil TAC 
-531, 1360807324, 1360807347, 23, PMT front of the drift tube array. shutter x= .515in y=.492 , Micropulse Gate , Ar/CF4 Tube #7 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , PMT , Fission foil TAC 
-532, 1360808077, 1360808686, 609, PMT front of the drift tube array. shutter x= .515in y=.492 , Micropulse Gate , Ar/CF4 Tube #7 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , PMT , Fission foil TAC 
-533, 1360822707, 1360822770, 63, PMT front of the drift tube array. shutter x= .212 in y=.189 , Micropulse Gate , Ar/CF4 Tube #7 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , PMT , Fission foil TAC 
-534, 1360823260, 1360823781, 521, PMT front of the drift tube array. shutter x= .352 in y=.331 , Micropulse Gate , Ar/CF4 Tube #7 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , PMT , Fission foil TAC 
-535, 1360824176, 1360826005, 1829, PMT front of the drift tube array. shutter x= 2.00 in y=.253 , Micropulse Gate , Ar/CF4 Tube #7 , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 , Ar/CH4 Tube #5 , PMT , Fission foil TAC 
-536, 1360826071, 1360826088, 17, test of the daq with one tube , Micropulse Gate off , Ar/CF4 Tube #7 off , Ar/CH4 Tube #2 , Ar/CH4 Tube #3 off , Ar/CH4 Tube #4 off , Ar/CH4 Tube #5 off , PMT off , 
-537, 1360826120, 1360826230, 110, test of the daq with one tube , Micropulse Gate off , Ar/CF4 Tube #7 off , Ar/CH4 Tube #2 dead , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 off , Ar/CH4 Tube #5 off , PMT off , 
-538, 1360826427, 1360826592, 165, test of the daq with one tube 16 ms gate , Micropulse Gate off , Ar/CF4 Tube #7 off , Ar/CH4 Tube #2 dead , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 off , Ar/CH4 Tube #5 off , PMT off , 
-539, 1360826993, 1360827107, 114, test of the daq with one tube 16 ms gate , Micropulse Gate off , Ar/CF4 Tube #7 off , Ar/CH4 Tube #2 dead , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 off , Ar/CH4 Tube #5 off , PMT off , 
-540, 1360829251, 1360829269, 18, background test , Micropulse Gate off , Ar/CF4 Tube #7 off , Ar/CH4 Tube #2 dead , Ar/CH4 Tube #3 , Ar/CH4 Tube #4 off , Ar/CH4 Tube #5 off , PMT off , 
-541, 1360829784, 1360830047, 263, single tube with scintillator backing x=2.0 y=0.241 , Micropulse Gate , , , , , Ar/CH4 Tube #5 , PMT , 
-543, 1360830328, 1360830362, 34, single tube with scintillator backing x=2.0 y=0.241 , Micropulse Gate , , , , , Ar/CH4 Tube #5 , PMT , 
-544, 1360830652, 1360830669, 17, single tube with scintillator backing x=2.0 y=0.241 #2 , Micropulse Gate , , , , , Ar/CH4 Tube #5 , PMT , 
-545, 1360830734, 1360830758, 24, single tube with scintillator backing x=2.0 y=0.241 #2 , Micropulse Gate , , , , , Ar/CH4 Tube #5 , PMT , 
-546, 1360831156, 1360831166, 10, single tube with scintillator backing shutter close , Micropulse Gate , , , , , Ar/CH4 Tube #5 , PMT , 
-547, 1360831520, 1360861358, 29838, single tube with scintillator backing x=2.0 y=0.241 , Micropulse Gate , , , , , Ar/CH4 Tube #5 , PMT , 
-548, 1360871796, 1360873930, 2134, single tube with scintillator backing x=2.0 y=2.0 , Micropulse Gate , , , , , Ar/CH4 Tube #5 , PMT , 
-550, 1360875126, 1360875633, 507, Out of Beamline, beam on, single tube with scintillator backing x=2.0 y=2.0 , Micropulse Gate , , , , Ar/Ch4 Tube #4 on floor , Ar/CH4 Tube #5 , PMT , 
-551, 1360876242, 1360878248, 2006, Out of Beamline, beam off, single tube with scintillator backing x=2.0 y=2.0 , Micropulse Gate , , , , Ar/Ch4 Tube #4 on floor , Ar/CH4 Tube #5 , PMT , 
-553, 1360881924, 1360882630, 706, BF3 Beam Test , shutters x=2" y=.244" , Micropulse Gate , , , , Ar/Ch4 Tube #4 on floor , Ar/CH4 Tube #5 on floor , BF3 centered in beam , 
-554, 1360888408, 1360888521, 113, BF3 off axis 18", Beam Test , shutters x=2 ,y=.244 , Micropulse Gate , , , , , , BF3 centered in beam , 
-555, 1360888725, 1360899645, 10920, BF3 off axis 18 , Micropulse Gate , , , , , , BF3 centered in beam , 
-556, 1360902431, 1360902444, 13, PMT, CF4, CH4 beam tests, shutter x=2, y=.243 , Micropulse Gate , Ar/CH4 Tube #1 on floor in line , , , , Ar/CH4 Tube #5 on floor to side , PMT , CF4 tube #7 in beam front 
-557, 1360902536, 1360902598, 62, PMT, CF4, CH4 beam tests, shutter x=2, y=.243 , Micropulse Gate , Ar/CH4 Tube #1 on floor in line , , , , Ar/CH4 Tube #5 on floor to side , PMT , CF4 tube #7 in beam front 
-558, 1360902735, 1360902925, 190, PMT, CF4, CH4 beam tests, shutter x=2, y=.243 , Micropulse Gate , Ar/CH4 Tube #1 on floor in line , , , , Ar/CH4 Tube #5 on floor to side , PMT , CF4 tube #7 in beam front 
-559, 1360902988, 1360903895, 907, PMT, CF4, CH4 beam tests, shutter x=2, y=.243 , Micropulse Gate , , , , , Ar/CH4 Tube #5 on floor to side , PMT , CF4 tube #7 in beam front 
-560, 1360910188, 1360910296, 108, PMT, CF4 background test , Micropulse Gate , , , , , Ar/CH4 Tube #5 on floor to side , PMT , CF4 tube #7 in beam front 
-561, 1360910301, 1360910649, 348, PMT, CF4 background test , Micropulse Gate , , , , , Ar/CH4 Tube #5 on floor to side , PMT , CF4 tube #7 in beam front 
-562, 1360911757, 1360949205, 37448, overnight PMT, CF4, CH4 beam run, shutter x=2, y=.223 , Micropulse Gate , , , , , Ar/CH4 Tube #5 on floor to side , PMT , CF4 tube #7 in beam front 
-563, 1360955762, 1360962017, 6255, PMT and Ethane Activation test, Shutters fully open , Micropulse Gate , , , , , Ethane #5 in beam front , PMT , CF4 tube #7 on ground 
-564, 1360982155, 1360982334, 179, Neutron imaging plates, with PMT behind and Ethane in front Shutters fully open , Micropulse Gate , , , , , Ethane #5 in beam front , PMT , CF4 tube #7 on ground 
-565, 1360982377, 1360984516, 2139, Neutron imaging plates, with PMT behind and Ethane in front Shutters fully open , Micropulse Gate , , , , , Ethane #5 in beam front , PMT , CF4 tube #7 on ground 
-566, 1360985503, 1360986984, 1481, Background of Lead House for Tube#1 , Micropulse Gate , Et#1 Floor, onaxis, lead housed , , , , Ethane #5 in beam front , PMT , 
-567, 1360987256, 1360988810, 1554, Beam Test with neutron imaging plate 5 ft from foil, Lead House for Tube#1 , Micropulse Gate , Et#1 Floor, onaxis, lead housed , , , , Ethane #5 in beam front , PMT , 
-569, 1360988939, 1360989957, 1018, Beam Test with neutron imaging plate 5 ft from foil, Lead House for Tube#1 , Micropulse Gate , Et#1 Floor, onaxis, lead housed , , , , Ethane #5 in beam front , PMT , 
-570, 1360990278, 1360991711, 1433, Background after beam test, Lead House for Tube#1 , Micropulse Gate , Et#1 Floor, onaxis, lead housed , , , , Ethane #5 in beam front , PMT , 
-571, 1360992141, 1360992182, 41, Beam on, Lead House #1, new PMT, back of room Neutron foil , Micropulse Gate , Et#1 Floor, onaxis, lead housed , , New Slim PMT in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-572, 1360992867, 1360993779, 912, Beam on, Lead House #1, new PMT, back of room Neutron foil , Micropulse Gate , Et#1 Floor, onaxis, lead housed , , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-573, 1361051440, 1361054277, 2837, Test run of the daq with 64-bit support fopen , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-574, 1361054958, 1361056217, 1259, Test run of the daq with 64-bit support fopen , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-575, 1361056457, 1361056473, 16, Test run of the daq with 64-bit support fopen , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-576, 1361056586, 1361056604, 18, Test run of the daq with 64-bit support fopen , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-577, 1361056957, 1361056975, 18, Test run of the daq with 64-bit support fopen , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-578, 1361057184, 1361057209, 25, Test run of the daq with 64-bit support fopen , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-579, 1361057266, 1361057298, 32, Test run of the daq with 64-bit support fopen , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-580, 1361057671, 1361057836, 165, Test run of the daq with 64-bit support fopen , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-581, 1361057973, 1361057979, 6, Test run of the daq with 64-bit support fopen , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-582, 1361058047, 1361058080, 33, Test run of the daq with 64-bit support fopen , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-583, 1361058151, 1361058165, 14, Test run of the daq with 64-bit support fopen , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-584, 1361058261, 1361060402, 2141, Pulser Run , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-585, 1361060672, 1361060739, 67, Pulser Run , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-586, 1361060786, 1361060795, 9, Pulser Run , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-587, 1361060969, 1361060982, 13, Pulser Run , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-588, 1361061226, 1361061233, 7, Pulser Run , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-589, 1361061508, 1361061520, 12, Pulser Run , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-590, 1361061577, 1361061587, 10, Pulser Run , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-591, 1361061884, 1361061897, 13, Pulser Run , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-592, 1361062016, 1361062036, 20, Pulser Run , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-593, 1361062303, 1361062315, 12, Pulser Run , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-594, 1361062386, 1361062445, 59, Pulser Run , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-595, 1361062487, 1361062496, 9, Pulser Run , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-596, 1361062535, 1361062547, 12, Pulser Run , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-598, 1361062662, 1361062695, 33, Pulser Run , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-599, 1361062804, 1361063152, 348, Pulser Run , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-600, 1361063212, 1361063249, 37, Pulser Run , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-601, 1361063294, 1361063329, 35, Pulser Run , Micropulse Gate , Et#1 Floor, onaxis, lead housed , Pulser , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-602, 1361063667, 1361063677, 10, Pulser Run at 31 us per pulse , Micropulse Gate , Et#1 Floor, onaxis, lead off , Pulser , New SiPM in front off , , Ethane #5 in beam middle off , Old Bulky PMT in back off , 
-603, 1361063719, 1361064545, 826, Pulser Run at 31 us per pulse , Micropulse Gate , Et#1 Floor, onaxis, lead off , Pulser , New SiPM in front off , , Ethane #5 in beam middle off , Old Bulky PMT in back off , 
-604, 1361064717, 1361065384, 667, Pulser Run at 15.5 us per pulse , Micropulse Gate , Et#1 Floor, onaxis, lead off , Pulser , New SiPM in front off , , Ethane #5 in beam middle off , Old Bulky PMT in back off , 
-605, 1361065591, 1361065794, 203, Pulser Run at 7.4 us per pulse , Micropulse Gate , Et#1 Floor, onaxis, lead off , Pulser , New SiPM in front off , , Ethane #5 in beam middle off , Old Bulky PMT in back off , 
-606, 1361065817, 1361066083, 266, Pulser Run at 7.4 us per pulse packet collection to 100 , Micropulse Gate , Et#1 Floor, onaxis, lead off , Pulser , New SiPM in front off , , Ethane #5 in beam middle off , Old Bulky PMT in back off , 
-607, 1361125409, 1361127182, 1773, background after beam off for the night. , Micropulse Gate , Et#1 Floor, onaxis, lead , , New SiPM in front , , Ethane #5 in beam middle , Old Bulky PMT in back , 
-608, 1361314961, 1361315035, 74, TEST of UCNB , , , , , , , , 
-609, 1361315082, 1361315121, 39, TEST of UCNB , , , , , , , , 
-610, 1361315374, 1361315397, 23, TEST of UCNB , , , , , , , , 
-611, 1361316212, 1361316251, 39, TEST of UCNB , , , , , , , , 
-612, 1361316418, 1361316476, 58, TEST of UCNB , , , , , , , , 
-613, 1361316556, 1361316621, 65, TEST of UCNB , , , , , , , , 
-614, 1361316725, 1361316749, 24, TEST of UCNB , , , , , , , , 
-615, 1361317332, 1361317356, 24, TEST of UCNB , , , , , , , , 
-616, 1361317482, 1361317500, 18, TEST of UCNB , , , , , , , , 
-617, 1361322861, 1361322909, 48, TEST of UCNB , , , , , , , , 
-618, 1361323001, 1361323037, 36, TEST of UCNB , , , , , , , , 
-619, 1361323073, 1361323103, 30, TEST of UCNB , , , , , , , , 
-620, 1361323239, 1361323254, 15, TEST of UCNB , , , , , , , , 
-621, 1361323368, 1361323395, 27, TEST of UCNB , , , , , , , , 
-622, 1361323500, 1361323518, 18, TEST of UCNB , , , , , , , , 
-623, 1361323538, 1361323598, 60, TEST of UCNB , , , , , , , , 
-624, 1361391093, 1361391118, 25, TEST of UCNB , , , , , , , , 
+2174, 1383007666, 1383007784, 118, Test of the neutron flux with all tubes , , , , , , , , 
+2175, 1383007854, 1383007875, 21, Test of the neutron flux with all tubes , , , , , , , , 
+2176, 1383008161, 1383008183, 22, Test of the neutron flux with all tubes , , , , , , , , 
+2177, 1383008290, 1383008393, 103, Test of the neutron flux with all tubes , , , , , , , , 
+2178, 1383008908, 1383009144, 236, Testing Ar/Eth 1 , , , , , , , , 
+2179, 1383009352, 1383009533, 181, Testing Ar/Eth 1 , , , , , , , , 
+2180, 1383009595, 1383009754, 159, Testing Ar/Eth 2 , , , , , , , , 
+2181, 1383009813, 1383009931, 118, Testing Ar/Eth 2 , , , , , , , , 
+2182, 1383009937, 1383010047, 110, Testing Ar/Eth 2 , , , , , , , , 
+2183, 1383010078, 1383010149, 71, Testing Ar/Eth 2 , , , , , , , , 
+2184, 1383010201, 1383010276, 75, Testing Ar/Eth 1 , , , , , , , , 
+2185, 1383010348, 1383010415, 67, Testing Ar/Eth 3 , , , , , , , , 
+2186, 1383010425, 1383010504, 79, Testing Ar/Eth 3 , , , , , , , , 
+2187, 1383010539, 1383010672, 133, Testing Ar/Eth 4 , , , , , , , , 
+2188, 1383010681, 1383010704, 23, Testing Ar/Eth 4 , , , , , , , , 
+2189, 1383010755, 1383010781, 26, Testing Ar/Eth 5 , , , , , , , , 
+2190, 1383010840, 1383010851, 11, spectra gas gain matching , , , , , , , , 
+2191, 1383010885, 1383010922, 37, spectra gas gain matching , , , , , , , , 
+2192, 1383011080, 1383011090, 10, Testing all tubes , , , , , , , , 
+2193, 1383011123, 1383011135, 12, Testing all tubes , , , , , , , , 
+2194, 1383011242, 1383018364, 7122, Testing all tubes , , , , , , , , 
+2195, 1383019278, 1383019423, 145, Background of all tubes , , , , , , , , 
+2197, 1383020748, 1383022680, 1932, Background of all tubes , , , , , , , , 
+2200, 1383025154, 1383026150, 996, Background after colimated run , , , , , , , , 
+2202, 1383027589, 1383028856, 1267, 0.25 x 0.4 y with all tubes , , , , , , , , 
+2203, 1383029419, 1383030706, 1287, 0.25 x 0.4 y with all tubes (spectra gas on table) , , , , , , , , 
+2205, 1383031159, 1383031186, 27, 0.25 x 0.4 y with spectra in front and 1 in back , , , , , , , , 
+2207, 1383031302, 1383064272, 32970, 0.25 x 0.4 y with spectra in front and 1 in back , , , , , , , , 
+2208, 1383066138, 1383068002, 1864, 0.25 x 0.4 y closing shutters after 5minutes , , , , , , , , 
+2209, 1383068236, 1383068252, 16, shutter closed Cs137 on spectra gas , , , , , , , , 
+2211, 1383068339, 1383068371, 32, shutter closed Cs137 on spectra gas , , , , , , , , 
+2213, 1383068427, 1383069683, 1256, shutter closed Cs137 on spectra gas , , , , , , , , 
+2214, 1383070621, 1383070647, 26, shutter closed Cs137 on tube 1 , , , , , , , , 
+2216, 1383070710, 1383071297, 587, shutter closed Cs137 on tube 1 , , , , , , , , 
+2217, 1383076924, 1383077982, 1058, Source Voltage scan 1700 Ar-Et1 and CO2 , , , , , , , , 
+2218, 1383078432, 1383078716, 284, Sealed Source Voltage scan 1800 Ar-Et1 and Spectra7 , , , , , , , , 
+2219, 1383078872, 1383079060, 188, Sealed Source Voltage scan 1900 Ar-Et1 and Spectra7 , , , , , , , , 
+2220, 1383079258, 1383079464, 206, Sealed Source Voltage scan 2000 Ar-Et1 and Spectra7 , , , , , , , , 
+2221, 1383080228, 1383080518, 290, Sealed Source Voltage scan 2250 Ar-Et1 and Spectra7 , , , , , , , , 
+2222, 1383080721, 1383081135, 414, Sealed Source Voltage scan 2300 Ar-Et1 and Spectra7 , , , , , , , , 
+2223, 1383081225, 1383081269, 44, Sealed Source Voltage scan 2350 Ar-Et1 and Spectra7 , , , , , , , , 
+2224, 1383081322, 1383081343, 21, Sealed Source Voltage scan 2350 Ar-Et1 and Spectra7 , , , , , , , , 
+2225, 1383081486, 1383081621, 135, Sealed Source Voltage scan 2350 Ar-Et1 and Spectra7 , , , , , , , , 
+2226, 1383081637, 1383081826, 189, Sealed Source Voltage scan 2350 Ar-Et1 and Spectra7 , , , , , , , , 
+2227, 1383082032, 1383082243, 211, Double Check Sealed Source Voltage scan 2300 Ar-Et1 and Spectra7 , , , , , , , , 
+2228, 1383082366, 1383082440, 74, Double Check Sealed Source Voltage scan 2350 Ar-Et1 and Spectra7 , , , , , , , , 
+2229, 1383082551, 1383082642, 91, No Source Voltage scan 2350 Ar-Et1 and Spectra7 , , , , , , , , 
+2230, 1383082742, 1383082912, 170, No Source Voltage scan 2350 Ar-Et2 and Spectra7 , , , , , , , , 
+2231, 1383083153, 1383083355, 202, Sealed Source Voltage scan 2400 Ar-Et1 and Spectra7 , , , , , , , , 
+2232, 1383083435, 1383083444, 9, Sealed Source Voltage scan 2450 Ar-Et1 and Spectra7 , , , , , , , , 
+2233, 1383083498, 1383083682, 184, Sealed Source Voltage scan 2450 Ar-Et1 and Spectra7 , , , , , , , , 
+2234, 1383083754, 1383083778, 24, No Source Voltage scan 2450 Ar-Et1 and Spectra7 , , , , , , , , 
+2235, 1383083785, 1383083997, 212, No Source Voltage scan 2450 Ar-Et1 and Spectra7 , , , , , , , , 
+2236, 1383084110, 1383084275, 165, Sealed Source Voltage scan 2500 Ar-Et1 and Spectra7 , , , , , , , , 
+2237, 1383084356, 1383084441, 85, Sealed Source Voltage scan 2550 Ar-Et1 and Spectra7 , , , , , , , , 
+2239, 1383084615, 1383084671, 56, Sealed Source Voltage scan 2600 Ar-Et1 and Spectra7 , , , , , , , , 
+2240, 1383084865, 1383084913, 48, Sealed Source Voltage scan 2600 Ar-Et1 and Spectra7 , , , , , , , , 
+2241, 1383085065, 1383085139, 74, Sealed Source Voltage scan 2700 Ar-Et1 and Spectra7 , , , , , , , , 
+2242, 1383087903, 1383088000, 97, Sealed Source Voltage scan 2700 Spectra7 , , , , , , , , 
+2243, 1383090758, 1383091410, 652, Spectra7 1/2 inch collimator , , , , , , , , 
+2244, 1383091465, 1383091980, 515, Spectra7 1/2 inch collimator 2750V , , , , , , , , 
+2245, 1383092094, 1383093054, 960, Spectra7 1/2 inch collimator 2750V , , , , , , , , 
+2246, 1383093108, 1383094719, 1611, Spectra7 1/2 inch collimator 2800V , , , , , , , , 
+2247, 1383094839, 1383095967, 1128, Spectra7 1/2 inch collimator 2800V after ramp , , , , , , , , 
+2248, 1383096080, 1383097037, 957, Spectra7 1/2 inch collimator 2600V , , , , , , , , 
+2250, 1383097779, 1383102719, 4940, Ar/Ethane 1/2 inch collimator 2400V , , , , , , , , 
+2251, 1383102878, 1383103635, 757, Ar/Ethane 1/2 inch collimator 2400V x20 gain , , , , , , , , 
+2252, 1383103788, 1383104785, 997, Ar/Ethane 1/2 inch collimator 2500V , , , , , , , , 
+2253, 1383105532, 1383106567, 1035, Ar/Ethane 1/2 inch collimator 2600V , , , , , , , , 
+2254, 1383107081, 1383107993, 912, Ar/Ethane 1/2 inch collimator 2200V , , , , , , , , 
+2255, 1383108230, 1383108838, 608, Ar/Ethane 1/2 inch collimator 2200V , , , , , , , , 
+2257, 1383110711, 1383114371, 3660, Ar/Ethane 1/2 inch collimator 2100V long , , , , , , , , 
+2258, 1383114475, 1383115181, 706, Ar/Ethane 1/2 inch collimator 2100V background , , , , , , , , 
+2260, 1383115326, 1383116428, 1102, Ar/Ethane cs137 source , , , , , , , , 
+2261, 1383119067, 1383119083, 16, Spectra 1/2 inch collimator 2500V x , , , , , , , , 
+2262, 1383119221, 1383119254, 33, Spectra 1/2 inch collimator 2500V x , , , , , , , , 
+2263, 1383119351, 1383119516, 165, Spectra 1/2 inch collimator 2500V x , , , , , , , , 
+2264, 1383119542, 1383119556, 14, Spectra 1/2 inch collimator 2500V x , , , , , , , , 
+2265, 1383119711, 1383119787, 76, Spectra 1/2 inch collimator 2500V x , , , , , , , , 
+2266, 1383119938, 1383120029, 91, Spectra 1/2 inch collimator 2400V x , , , , , , , , 
+2267, 1383120138, 1383120455, 317, Spectra 1/2 inch collimator 2300V x , , , , , , , , 
+2268, 1383120495, 1383120518, 23, Spectra 1/2 inch collimator 2200V x , , , , , , , , 
+2270, 1383149006, 1383150196, 1190, Spectra 1/2 inch collimator 2200V x 137cs calib , , , , , , , , 
+2271, 1383160595, 1383160639, 44, Spectra 1/2 inch collimator 2200V x 137cs calib , , , , , , , , 
+2272, 1383160671, 1383160729, 58, test of sipm array , , , , , , , , 
+2273, 1383160756, 1383161156, 400, test of sipm array , , , , , , , , 
+2274, 1383161184, 1383161281, 97, test of sipm array , , , , , , , , 
+2275, 1383161343, 1383161416, 73, test of sipm array , , , , , , , , 
+2276, 1383161452, 1383161615, 163, test of sipm array , , , , , , , , 
+2277, 1383161699, 1383161829, 130, test of sipm array thresholds to 250 , , , , , , , , 
+2278, 1383162036, 1383162383, 347, test of sipm array thresholds to 250 , , , , , , , , 
+2279, 1383162433, 1383162454, 21, test of sipm array thresholds to 250 , , , , , , , , 
+2280, 1383162533, 1383162657, 124, test of sipm array in beam , , , , , , , , 
+2281, 1383162855, 1383163112, 257, test of sipm array in beam , , , , , , , , 
+2283, 1383163326, 1383163438, 112, test of sipm array in beam , , , , , , , , 
+2284, 1383163474, 1383163497, 23, test of sipm array in beam , , , , , , , , 
+2285, 1383163560, 1383163738, 178, test of sipm 1 in beam , , , , , , , , 
+2286, 1383163786, 1383163820, 34, test of sipm 2 in beam , , , , , , , , 
+2287, 1383163847, 1383163899, 52, test of sipm 3 in beam , , , , , , , , 
+2288, 1383163952, 1383163981, 29, test of sipm 4 in beam , , , , , , , , 
+2289, 1383164032, 1383164119, 87, test of sipm 5 in beam , , , , , , , , 
+2290, 1383164156, 1383164190, 34, test of sipm 6 in beam , , , , , , , , 
+2291, 1383164225, 1383164258, 33, test of sipm 7 in beam , , , , , , , , 
+2292, 1383164388, 1383164793, 405, test of all sipm background after exposure , , , , , , , , 
+2293, 1383164913, 1383164920, 7, test of all sipm in beam , , , , , , , , 
+2294, 1383164985, 1383167232, 2247, test of all sipm in beam , , , , , , , , 
+2295, 1383167353, 1383171839, 4486, test of all sipm in beam , , , , , , , , 
+2296, 1383172073, 1383172473, 400, test of all sipm Background after 1 hour exposure 1cm collimator , , , , , , , , 
+2297, 1383173274, 1383174206, 932, scintallator array at 45 degree angle ns , , , , , , , , 
+2298, 1383174802, 1383176174, 1372, scintallator array at 22.5 degree angle ns , , , , , , , , 
+2300, 1383176937, 1383177871, 934, test of the shutter reduction , , , , , , , , 
+2301, 1383177994, 1383178020, 26, x = 2.022 y = 0.302 sipm array , , , , , , , , 
+2302, 1383178028, 1383178989, 961, x = 2.022 y = 0.302 sipm array , , , , , , , , 
+2303, 1383181652, 1383181706, 54, sipm array spectra with 137 cs 2500 V , , , , , , , , 
+2304, 1383181818, 1383181923, 105, sipm array spectra with 137 cs 2500 V , , , , , , , , 
+2305, 1383182326, 1383189929, 7603, sipm array spectra with 137 cs 2500 V , , , , , , , , 
+2306, 1383190099, 1383190389, 290, sipm array spectra bckgrd 2500 V , , , , , , , , 
+2307, 1383190975, 1383192961, 1986, sipm array ar/ethane 2500V x = 2.02 y =0.302 , , , , , , , , 
+2308, 1383193012, 1383195930, 2918, sipm array ar/ethane 2500V x = 2.02 y =0.302 , , , , , , , , 
+2309, 1383196889, 1383196935, 46, sipm array ar/ethane 2500V angle scattering , , , , , , , , 
+2310, 1383197037, 1383236441, 39404, sipm array ar/ethane 2500V angle sca\ttering , , , , , , , , 
+2311, 1383238099, 1383238134, 35, LaBr Detector on Drift tubes after 11hr run , , , , , , , , 
+2312, 1383238476, 1383238572, 96, LaBr Detector on Drift tubes after 11hr run , , , , , , , , 
+2313, 1383238625, 1383239221, 596, LaBr Detector on Drift tubes after 11hr run , , , , , , , , 
+2314, 1383239365, 1383240019, 654, LaBr Detector on Drift tubes after 11hr run , , , , , , , , 
+2315, 1383240122, 1383240684, 562, LaBr Detector on Drift tubes after 11hr run backgound , , , , , , , , 
+2316, 1383240897, 1383241249, 352, LaBr Detector on Drift tubes after 11hr run co60 , , , , , , , , 
+2317, 1383241654, 1383242637, 983, LaBr Detector on Drift tubes after 11hr run tube on floor , , , , , , , , 
+2318, 1383242911, 1383243019, 108, Co60 on Top of scintillator array , , , , , , , , 
+2319, 1383243166, 1383243536, 370, Co60 on Top of scintillator array , , , , , , , , 
+2320, 1383249381, 1383249912, 531, Co60 on Top of scintillator array , , , , , , , , 
+2321, 1383251105, 1383252458, 1353, Test of trigger input , , , , , , , , 
+2322, 1383252530, 1383252619, 89, Test of trigger input , , , , , , , , 
+2323, 1383252683, 1383252906, 223, Test of trigger input , , , , , , , , 
+2324, 1383252911, 1383252954, 43, Test of trigger input , , , , , , , , 
+2325, 1383253002, 1383253025, 23, Test of trigger input , , , , , , , , 
+2326, 1383253059, 1383253098, 39, Test of trigger input , , , , , , , , 
+2327, 1383253241, 1383253261, 20, Test of trigger input , , , , , , , , 
+2328, 1383253311, 1383253341, 30, Test of trigger input , , , , , , , , 
+2329, 1383253542, 1383253565, 23, Test of trigger input , , , , , , , , 
+2330, 1383253598, 1383253615, 17, Test of trigger input , , , , , , , , 
+2331, 1383253649, 1383253684, 35, Test of trigger input , , , , , , , , 
+2332, 1383253748, 1383255469, 1721, Elena scint in position, shutter closed, leading edge trigger , , , , , , , , 
+2333, 1383256052, 1383258378, 2326, Elena scint in position, shutter closed, leading edge trigger wall , , , , , , , , 

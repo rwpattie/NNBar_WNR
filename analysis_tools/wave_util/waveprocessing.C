@@ -33,11 +33,12 @@ Int_t WaveProcessor::CalculatePreTrigger(Fadc_Event eve,Int_t nc)
       postcnt--;
     } while( eve.adc[precnt] < Chan[nc].uthresh && 
 	     eve.adc[precnt] > Chan[nc].lthresh);
+    
     /*
     std::cout << "Pretrigger samples are : "<< precnt << "\t" << 16*(Chan.pre+1) << std::endl;
-    
     std::cout << "Pretrigger samples are : "<< postcnt << "\t" << (Chan.post) << std::endl;
     */
+    
     return precnt; 
 }
 //---------------------------------------------------------------------
@@ -104,43 +105,52 @@ Bool_t WaveProcessor::GetThreshold(Int_t nrun, Int_t nchn)
 	  Chan[nchn].post    = atoi(row->GetField(3));
       }
   }
-  std::cout << "Channel info" << nchn << std::endl;
+  std::cout << "---------------------------------------------"<<std::endl;
+  std::cout << "Channel info for " << nchn << std::endl;
   std::cout << "---------------------------------------------"<<std::endl;
   std::cout << "pre-trigger " << Chan[nchn].pre << std::endl;
-  
+  std::cout << "Upper thrsh " << Chan[nchn].uthresh << std::endl;
+  std::cout << "Lower thrsh " << Chan[nchn].lthresh << std::endl;
+
   return kTRUE; 
 }
 
-Int_t WaveProcessor::EventWght(Fadc_Event eve,Int_t *x)
+Int_t WaveProcessor::EventWght(Fadc_Event eve,Int_t *x,ULong64_t *t)
 {
   
   Bool_t AboveThr = kFALSE;
-  Int_t npeak = 0;
-  Int_t nch = eve.channel;
+  Int_t npeak   = 0;
+  Int_t nch     = eve.channel;
   Int_t current = 0;
+  Int_t nwidth  = 0;
   
-  for(Int_t i = 0 ; i < eve.last ; i++){
-      if(eve.adc[i] < Chan[nch].uthresh && eve.adc[i] > Chan[nch].lthresh){
-	if(AboveThr){
+  for( Int_t i = 0 ; i < eve.last ; i++ ){
+      // if the adc is between the threshold limits
+      if(eve.adc[i] < Chan[nch].uthresh){
+	if(AboveThr && nwidth > 10){
 	  x[npeak] = current;
 	  npeak++;
 	  current = 0;
+	  nwidth  = 0;
 	  AboveThr = kFALSE;
+	} else if(AboveThr && nwidth <=10){
+	  AboveThr = kFALSE;
+	  nwidth =0;
 	}
-      }
-      if(eve.adc[i] > Chan[nch].uthresh || eve.adc[i] < Chan[nch].lthresh){
-	if(!AboveThr)
+	// else the adc has exceeded the limits
+      }else if(eve.adc[i] > Chan[nch].uthresh){
+	nwidth++;
+	if(!AboveThr){
 	  AboveThr = kTRUE;
-	else {
+	  t[npeak] = (ULong64_t)i;
+	}else {
 	    if(eve.adc[i] > current && Chan[nch].uthresh < eve.adc[i])
 		current = eve.adc[i];
-	    else if(eve.adc[i] < current && Chan[nch].lthresh > eve.adc[i])
-		current = eve.adc[i];
 	}
       }
+      if( npeak > 10 )return npeak;
   }
   //std::cout << "Found npeaks " << npeak << std::endl;
-  npeak = 1;
   return npeak;
 }
 

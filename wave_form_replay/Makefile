@@ -2,7 +2,7 @@
 
 
 ROOTCFLAGS    = $(shell root-config --cflags)
-ROOTLIBS      = $(shell root-config --libs)   -lNew -lMinuit -lSpectrum
+ROOTLIBS      = $(shell root-config --libs)   -lNew -lMinuit -lSpectrum -D_FILE_OFFSET_BITS=64
 ROOTGLIBS     = $(shell root-config --glibs)
 
 all: na 

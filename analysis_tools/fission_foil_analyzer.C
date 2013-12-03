@@ -17,6 +17,10 @@
 #include <TH1F.h>
 #include <TH2F.h>
 #include <TFile.h>
+#include <TSQLServer.h>
+#include <TLine.h>
+#include <TSQLRow.h>
+#include <TSQLResult.h>
 #include <TROOT.h>
 #include <TStyle.h>
 #include <TMath.h>
@@ -25,7 +29,7 @@
 #include <stdio.h>     
 #include <stdlib.h> 
 #include <iostream>
-
+#include <string.h>
 // -- Analyzer includes
 #include "typesdef.h"
 #include "waveprocessing.h"
@@ -39,11 +43,13 @@ using namespace std;
 //
 TH1F *hMicroPulseSeg;
 TH1F *hMicroPulse;
-TH1F *hGasTubeEff;
+TH1F *hGasTubeEff[8];
 TH1F *hGasTubeEffSp;
-
+TH1F *hGasTubeEffUs[8];
+TH1F *hGasTubeEffSpUs;
 //--------------------------------------------------------------------------------------
 enum ChnType {
+  NOTHING  = -1,
   MPGATE   = 0,
   SPECTRA  = 1,
   GASTUBE  = 2,
@@ -54,10 +60,14 @@ enum ChnType {
   FFTAC    = 7,
   FFPH     = 8
 };
+
+Int_t ChnCon[8];
+
 std::vector<Coin_t> CoinTimes (8); 
 //---------------------------------------------------------------------------------------
-void FillGasTube(Fadc_Event event,Int_t toff,Int_t nWght,Int_t *peak);
+ChnType ParseComment(char *buff);
 void ScaleVarBinHisto(TH1F *hin);
+void DetermineActiveDetectors(Int_t nrun); 
 void SetROOTOpt();
 void DrawCanvas(TCanvas *c,TH1F *h,Int_t run,char *title,Bool_t DRAWLOG=kFALSE,
                      Bool_t DRAWXLOG=kFALSE,Bool_t CUST=kFALSE);
@@ -65,7 +75,7 @@ void DrawCanvasMulti(TCanvas *c,std::vector<TH1F*> h,Int_t run,char *title,Bool_
 void DefineHists();
 void DrawTOF(TCanvas *c1,Int_t nrun);
 Double_t EfromT(Double_t t,Double_t Dis);
-void DrawEnergySpec(TCanvas *c,Int_t nrun);
+void DrawEnergySpec(TCanvas *c,Int_t nrun,FissionChamber *FcChm);
 void AddEvent(Coin_t &Co,Long64_t time);
 Double_t TOF(Long64_t ts);
 Bool_t Check_Coincidence(Int_t n1,Double_t trgtime,TTree *t,Int_t nevent);
@@ -92,7 +102,7 @@ int main(int argc,char *argv[])
    // Setup some simple ROOT plotting options.
    SetROOTOpt();
    // Open the root file... 
-   TFile *f = new TFile(Form("%s/run00%dNA.root",getenv("WNR_OUTPUT_DATA"),
+   TFile *f = new TFile(Form("%s/run%05dNA.root",getenv("WNR_OUTPUT_DATA"),
 			     nnrun),"READ");
    if(!(f->IsOpen())){
      cout << "file failed to open " << endl;
@@ -117,16 +127,25 @@ int main(int argc,char *argv[])
    DefineHists();
    
    WaveProcessor *WavePr = new WaveProcessor();
+   DetermineActiveDetectors(nnrun);
    FissionChamber *FcChm = new FissionChamber(FFTAC,FFPH);
+   
    GasTube *GsSp         = new GasTube(1,1);
-   GasTube *GsTb         = new GasTube(2,5);
-   
+   std::vector<GasTube*> GsTb;
+   Int_t ngast[8];
+   for(int i = 0 ; i < 8 ; i++){
+      if(ChnCon[i] == GASTUBE){
+	GsTb.push_back(new GasTube(i,i));
+	GsTb[((int)GsTb.size()-1)]->GenerateDeadTimeHisto(tr);   
+	ngast[i] = ((int)GsTb.size()-1);
+      }
+   }
+   // draw the full vs. segmented event rates
    FcChm->GenerateDeadTimeHisto(tr);
-   GsTb->GenerateDeadTimeHisto(tr);
    GsSp->GenerateDeadTimeHisto(tr);
-   
+   // Set the thresholds
    for(Int_t i = 0 ; i < 8 ; i++)WavePr->GetThreshold(nnrun,i);
- 
+   // draw a status bar
    percentDone(-1,0,tr->GetEntries());
    Int_t nextp = 0;
    
@@ -139,7 +158,8 @@ int main(int argc,char *argv[])
       Int_t risetime = 0;
       if(i == tr->GetEntries()-1)RunTime = event.packet_time_l;
       AddEvent(CoinTimes[event.channel],event.first_time);
-      if( event.channel == MPGATE ){
+      
+      if( ChnCon[event.channel] == MPGATE ){
 	// Look at the Digitized TAC Pulse
 	    if( event.last < 40 ){
 	      hMicroPulseSeg->Fill((event.first_time+pretr+risetime)*DTIME);
@@ -149,33 +169,35 @@ int main(int argc,char *argv[])
 	      hMicroPulse->Fill((event.first_time+pretr+risetime)*DTIME);
 	      lastPulse = event.first_time+pretr+risetime;
 	    }
-      } else if( event.channel == GASTUBE3 ){
+      } else if( ChnCon[event.channel] >= GASTUBE && ChnCon[event.channel] <= GASTUBE5 ){
 	    pretr    = WavePr->CalculatePreTrigger(event,event.channel);
 	    risetime = WavePr->TimeToPeak(event,pretr);
 	    if( event.last > 100){
 	      Int_t peaks[20];
-	      Int_t nWght = WavePr->EventWght(event,peaks);
+	      ULong64_t times[20];
+	      Int_t nWght = WavePr->EventWght(event,peaks,times);
 	      Bool_t COIN = Check_Coincidence(6,(Double_t)(event.first_time*DTIME), tr ,i);
 	      tr->GetEntry(i);
-              GsTb->FillGasTube(event,pretr+risetime,nWght,peaks,risetime,COIN);
+              GsTb[ngast[event.channel]]->FillGasTube(event,pretr+risetime,nWght,peaks,times,risetime,COIN);
 	    }
-      } else if(event.channel == SPECTRA ){
+      } else if(ChnCon[event.channel] == SPECTRA ){
 	    pretr    = WavePr->CalculatePreTrigger(event,event.channel);
 	    risetime = WavePr->TimeToPeak(event,pretr);
 	    if( event.last > 100){
 	      Int_t peaks[20];
-	      Int_t nWght = WavePr->EventWght(event,peaks);
+	      ULong64_t times[20];
+	      Int_t nWght = WavePr->EventWght(event,peaks,times);
 	      Bool_t COIN = Check_Coincidence(6,(Double_t)(event.first_time*DTIME), tr ,i);
 	      tr->GetEntry(i);
-              GsSp->FillGasTube(event,pretr+risetime,nWght,peaks,risetime,COIN);
+              GsSp->FillGasTube(event,pretr+risetime,nWght,peaks,times,risetime,COIN);
 	    }
-      } else if( event.channel == FFTAC ){
+      } else if( ChnCon[event.channel] == FFTAC ){
 	    //if(Check_Coincidence( FFPH , (Double_t)(event.first_time*DTIME), tr ,i)){
 		//  std::cout<< "measured coincidence with micropulse" << std::endl;
 		 // tr->GetEntry(i);
 		  FcChm->Analyze_TAC(event);
 	    //}
-      } else if( event.channel == FFPH ){  
+      } else if( ChnCon[event.channel] == FFPH ){  
         // Look at the Analog signal..
 	    FcChm->Analyze_ADC(event);
 	    WavePr->IncrimentWaveCnt();
@@ -192,7 +214,7 @@ int main(int argc,char *argv[])
    
    TCanvas *c1 = new TCanvas("c1","c1");
 //    Draw the time of flight spectra.
-//    DrawTOF(c1,nnrun);
+    //DrawTOF(c1,nnrun);
 //   
 //    hPulse->Draw();
 //    c1->Print(Form("fission_foil_first_time_%d.pdf",nnrun));
@@ -208,7 +230,7 @@ int main(int argc,char *argv[])
 //    c1->Print(Form("ff_ADC_sig_bck_%d.pdf",nnrun));
 //    c1->Clear();
 //    
-//    DrawEnergySpec(c1,nnrun);
+    DrawEnergySpec(c1,nnrun,FcChm);
 //  
 //    gPad->SetLogx(0);
 //    gPad->SetLogy(0);
@@ -227,48 +249,55 @@ int main(int argc,char *argv[])
    lMicro->SetFillColor(0);
    lMicro->Draw();
    c1->Print(Form("micro_pulse_%d.pdf",nnrun));
-   
-   c1->Clear();
-   GsTb->hGasTubeMaxvsLast->Draw("colz");
-   c1->Print(Form("gastubelastvsmax_%d.pdf",nnrun));
-   
-   c1->Clear();
-   GsTb->hGasTubeADCvsTOF->Draw("colz");
-   c1->Print(Form("gastube_adc_vs_t_%d.pdf",nnrun));
-   c1->Clear();   
-   
+
    DrawCanvas(c1,FcChm->hTAC,nnrun,"fchamber_cortime",kTRUE);
-   DrawCanvas(c1,GsTb->hGasTubeRise,nnrun,"gastube_risetime");
-   DrawCanvas(c1,GsTb->hGasTubeMulti,nnrun,"gastube_multi");
-   DrawCanvas(c1,GsTb->hGasTubeADC,nnrun,"gastube_adc",kTRUE);
-   DrawCanvas(c1,GsTb->hGasTubeTOF,nnrun,"gastube_TOF",kTRUE);
-   DrawCanvas(c1,GsTb->hGasTube_PlasticTOF,nnrun,"gastube_plast_TOF",kTRUE);
-   DrawCanvas(c1,GsTb->hGasTubeNoCoinTOF,nnrun,"gastube_noplast_TOF",kTRUE);
-   DrawCanvas(c1,GsTb->hFullTime,nnrun,"gastube_deadtime_cor",kTRUE);
-   
+  
    std::vector<TH1F*> hists;
+   
+   //hists.push_back(GsSp->hGasTubeTOFSc);
+   hists.push_back(GsSp->hGasTubeTOF);
+   for(int i = 0 ; i < (int)GsTb.size() ;i++) {
+    //hists.push_back(GsTb[i]->hGasTubeTOFSc);
+    hists.push_back(GsTb[i]->hGasTubeTOF);
+   }
    hists.push_back(FcChm->hTAC);
-   hists.push_back(GsTb->hGasTubeTOF);
-   hists.push_back(GsTb->hGasTubeTOFSc);
    DrawCanvasMulti(c1,hists,nnrun,"gastube_TOFs",kTRUE);
    hists.clear();
    
-   GsTb->GenerateEnergySpec(GsTb->hGasTubeTOFSc,GsTb->hGasTube_Energy,"hGasTube_Energy","Energy Spectrum",kFALSE);
+   hists.push_back(GsSp->hGasTubeRise);
+   for(int i = 0 ; i <(int)GsTb.size() ; i++)
+      hists.push_back(GsTb[i]->hGasTubeRise);  
+   DrawCanvasMulti(c1,hists,nnrun,"gastube_risetimes");
+   hists.clear();
+   
+   for(int i = 0 ; i < (int)GsTb.size() ;i++) {
+    GsTb[i]->GenerateEnergySpec(GsTb[i]->hGasTubeTOFSc,GsTb[i]->hGasTube_Energy,Form("hGasTube_Energy_%d",i),"Energy Spectrum",kFALSE);
+    GsTb[i]->GenerateEnergySpec(GsTb[i]->hGasTubeTOF,GsTb[i]->hGasTube_EnergyUs,Form("hGasTube_Energy_Us_%d",i),"Energy Spectrum (Us)",kFALSE);
+    hists.push_back(GsTb[i]->hGasTube_Energy);
+   }
    GsSp->GenerateEnergySpec(GsSp->hGasTubeTOFSc,GsSp->hGasTube_Energy,"hGasTube_Energy_Sp","Energy Spectrum",kFALSE);
-
-   hists.push_back(GsTb->hGasTube_Energy);
+   GsSp->GenerateEnergySpec(GsSp->hGasTubeTOF,GsSp->hGasTube_EnergyUs,"hGasTube_Energy_SpUs","Energy Spectrum(us)",kFALSE);
+   
    hists.push_back(GsSp->hGasTube_Energy);
    hists.push_back(FcChm->hTAC_RAW_Energy);
    hists.push_back(FcChm->hTAC_Energy);
    DrawCanvasMulti(c1,hists,nnrun,"gastube_energy",kTRUE,kTRUE);
    hists.clear();
    
-  
-   CreateEffic(GsTb->hGasTube_Energy,FcChm->hTAC_Energy,hGasTubeEff,"hGasTubeEff","Ar/Ethane Efficiency");
-   CreateEffic(GsSp->hGasTube_Energy,FcChm->hTAC_Energy,hGasTubeEffSp,"hGasTubeEffSp","Spectra Gas Efficiency");
+   for(int i = 0 ; i < (int)GsTb.size() ;i++) {
+    CreateEffic(GsTb[i]->hGasTube_Energy,FcChm->hTAC_Energy,hGasTubeEff[i],Form("hGasTubeEff_%d",i)
+		,Form("Ar/Ethane Ch.%d",i));
+    CreateEffic(GsTb[i]->hGasTube_EnergyUs,FcChm->hTAC_Energy,hGasTubeEffUs[i],Form("hGasTubeEff_%d",i)
+		,Form("Ar/Ethane Ch.%d",i));
+     hists.push_back(hGasTubeEff[i]);
+     hists.push_back(hGasTubeEffUs[i]);
+   }
    
-   hists.push_back(hGasTubeEff);
+   CreateEffic(GsSp->hGasTube_Energy,FcChm->hTAC_Energy,hGasTubeEffSp,"hGasTubeEffSp","Spectra Gas");
+   CreateEffic(GsSp->hGasTube_EnergyUs,FcChm->hTAC_Energy,hGasTubeEffSpUs,"hGasTubeEffSp","Spectra Gas");
+   
    hists.push_back(hGasTubeEffSp);
+   hists.push_back(hGasTubeEffSpUs);
    
    DrawCanvasMulti(c1,hists,nnrun,"gastube_eff",kTRUE,kTRUE,kTRUE);
    
@@ -369,32 +398,13 @@ void AddEvent(Coin_t &Co,Long64_t time)
   }
 }
 
-void FillGasTube(Fadc_Event eve,Int_t toff,Int_t nWght,Int_t *peak)
-{
-/* 
-  Double_t tof = 0;//TOF(eve.first_time);
- 
-   if(eve.first_time < 39060){
-     tof = ((eve.first_time-63)%112)*DTIME;//+ toff*DTIME;
-   } else {
-     tof = (eve.first_time-39060)*DTIME;// + toff*DTIME;
-   }
-//    
-   hGasTubeTOF->Fill(tof);
-   hGasTubeADCvsTOF->Fill(tof,eve.max-eve.ped);
-   //for(Int_t i = 0 ; i < nWght ; i++){
-      hGasTubeADC->Fill(peak[0]);
-   //}
-   hGasTubeMulti->Fill(nWght);*/
-}
-
 void ScaleVarBinHisto(TH1F *hin)
 {
     for(Int_t i = 0; i < hin->GetNbinsX();i++)
       hin->SetBinContent(i,hin->GetBinContent(i)/hin->GetBinWidth(i));
 }
 
-void DrawEnergySpec(TCanvas *c1,Int_t nrun)
+void DrawEnergySpec(TCanvas *c1,Int_t nrun,FissionChamber *FcChm)
 {
 
    TGraph *gEner = new TGraph("wnr_neutron_flux.txt"," %*lg %*lg %*lg %lg %lg %*lg %*lg %*lg");
@@ -408,16 +418,16 @@ void DrawEnergySpec(TCanvas *c1,Int_t nrun)
    gEner->SetMarkerColor(4);
    gEner->SetMarkerStyle(20);
 
-//    hTAC_Energy->SetLineColor(4);
-//    hTAC_Energy->SetMarkerColor(4);
-//    hTAC_Energy->Draw("e1");
-//    hTAC_Energy->GetXaxis()->SetRangeUser(1,1000);
-//    gEner->Draw("p");
-//    hTAC_Energy->GetYaxis()->SetRangeUser(1e5,7e8);
-//    hDTAC_Energy->SetLineColor(1);
-//    hDTAC_Energy->SetMarkerStyle(24);
-//    hDTAC_Energy->SetMarkerColor(1); 
-//    hDTAC_Energy->Draw("same e1 x0");
+    FcChm->hTAC_Energy->SetLineColor(4);
+    FcChm->hTAC_Energy->SetMarkerColor(4);
+    FcChm->hTAC_Energy->Draw("e1");
+    FcChm->hTAC_Energy->GetXaxis()->SetRangeUser(0.001,1000);
+    gEner->Draw("p");
+    FcChm->hTAC_Energy->GetYaxis()->SetRangeUser(1e4,7e8);
+    FcChm->hDTAC_Energy->SetLineColor(1);
+    FcChm->hDTAC_Energy->SetMarkerStyle(24);
+    FcChm->hDTAC_Energy->SetMarkerColor(1); 
+    FcChm->hDTAC_Energy->Draw("same e1 x0");
 //    hADC_Energy->SetLineColor(2);
 //    hADC_Energy->SetMarkerColor(2);
 //    hADC_Energy->SetMarkerStyle(20);
@@ -425,20 +435,20 @@ void DrawEnergySpec(TCanvas *c1,Int_t nrun)
 //    
 //    hADC_Energy->Draw("same e1 x0");   
 //    
-//    //hGasTube_Energy->SetLineColor(3);
-//    //hGasTube_Energy->Draw("same");
+    //hGasTube_Energy->SetLineColor(3);
+    //hGasTube_Energy->Draw("same");
 //    
-//    gPad->SetLogy();
-//    gPad->SetLogx();
+    gPad->SetLogy();
+    gPad->SetLogx();
 //    
-//    TLegend leg(0.5,0.6,0.86,0.86);
-//    leg.SetFillColor(0);
-//    leg.AddEntry(hTAC_Energy,"WNR TAC","lp");
-//    leg.AddEntry(hDTAC_Energy,"fADC TAC","lp");
+    TLegend leg(0.5,0.6,0.86,0.86);
+    leg.SetFillColor(0);
+    leg.AddEntry(FcChm->hTAC_Energy,"WNR TAC","lp");
+    leg.AddEntry(FcChm->hDTAC_Energy,"fADC TAC","lp");
 //    leg.AddEntry(hADC_Energy,"Analog fADC","lp");
-//    leg.Draw();
+    leg.Draw();
    
-  // c1->Print(Form("ff_Converted_Energy_Spectra_%d.pdf",nrun));
+   c1->Print(Form("ff_Converted_Energy_Spectra_%d.pdf",nrun));
    c1->Clear();
   
 }
@@ -514,6 +524,10 @@ void DrawCanvasMulti(TCanvas *c,std::vector<TH1F*> h,Int_t run,char *title,Bool_
 {
   
   c->Clear();
+  
+  gPad->SetTicks();
+  //gPad->SetGrid();
+  
    if(DRAWLOG)
      gPad->SetLogy(1);
    else 
@@ -524,33 +538,62 @@ void DrawCanvasMulti(TCanvas *c,std::vector<TH1F*> h,Int_t run,char *title,Bool_
    else
      gPad->SetLogx(0);
    
-   h[0]->Draw();
-   
+   h[0]->Draw("HIST " );
+   h[0]->GetXaxis()->SetRangeUser(1.0,700.);
    Double_t max = h[0]->GetBinContent(h[0]->GetMaximumBin());
-   
+   Int_t offset = 1;
    if((int)h.size() > 1){
      for(Int_t i = 1 ; i < (int)h.size() ; i++){
        if(h[i]->GetBinContent(h[i]->GetMaximumBin()) > max)
 	 max = h[i]->GetBinContent(h[i]->GetMaximumBin());
-       h[i]->SetLineColor(i+1);
-       h[i]->SetMarkerColor(i+1);
-       h[i]->Draw("same");
+     //  if(i == 4 && offset == 1) offset++;
+   //    h[i]->SetLineColor(i+offset);
+     //  h[i]->SetMarkerColor(i+offset);
+       //h[i]->SetLineStyle(i+offset);
+    //   if(!CUST)h[i]->Draw("same HIST C");
      }
    }
-   
+   Int_t modc=0;
    if(CUST){
-    h[0]->GetYaxis()->SetRangeUser(1e-6,1.e-2);
-    for(Int_t i = 0 ; i < (int)h.size() ; i++)h[i]->SetMarkerStyle(20);
+    h[0]->GetYaxis()->SetRangeUser(1e-9,10.*max);
+    
+    for(Int_t i = 0 ; i < (int)h.size() ; i++){
+      if(i%2==0){
+	modc++;
+	if(modc==5)modc++;
+	//h[i]->SetMarkerStyle(20);
+        h[i]->SetMarkerColor(modc);
+	h[i]->SetLineColor(modc);
+	//h[i]->SetLineStyle(modc);
+	h[i]->SetLineWidth(3);
+	h[i]->Draw("same HIST ");
+      }else{
+	//h[i]->SetMarkerStyle(24);
+	//h[i]->SetMarkerColor(modc);
+	h[i]->SetLineWidth(3);
+	h[i]->SetLineColor(modc);
+	h[i]->SetLineStyle(modc);
+	h[i]->Draw("same HIST");
+      }
+    }
    }else
-    h[0]->GetYaxis()->SetRangeUser(1,1.1*max);
+   h[0]->GetYaxis()->SetRangeUser(1,10.*max);
    
-   TLegend *l = new TLegend(0.6,0.2,0.85,0.45);
+   TLegend *l = new TLegend(0.6,0.75,0.92,0.92);
    for(Int_t i = 0 ; i < (int)h.size() ; i++){
-      l->AddEntry(h[i],h[i]->GetTitle(),"l");
+     if(CUST){
+       if(i%2 == 0 )
+	l->AddEntry(h[i],h[i]->GetTitle(),"lp");
+     }else{
+       	l->AddEntry(h[i],h[i]->GetTitle(),"lp");
+     }
    }
-  // l->Draw();
+   l->SetFillColor(0);
+  l->Draw();
   c->Print(Form("%s_%d.pdf",title,run)); 
   c->Print(Form("%s_%d.gif",title,run)); 
+  c->Print(Form("%s_%d.C",title,run)); 
+  
   delete l;
 }
 
@@ -637,25 +680,93 @@ int percentDone(int per,int curline,int totline)
 void CreateEffic(TH1F *hN,TH1F *hD,TH1F *&hOut,const char *title, 
 					const char *name)
 {
-  
   hOut = (TH1F*)hN->Clone(title);
-  hOut->SetTitle(Form("%s ; Energy (MeV) ; Efficiency",name));
   hOut->Clear();
-  //for(Int_t i = 0 ; i <= hOut->GetNbinsX() ; i++)hOut->SetBinContent(i,0);
-  
+  hOut->SetTitle(Form("%s ; Energy (MeV) ; Efficiency [N(E)/I_{n}(E)]",name));
+    
   for(Int_t i = 1 ; i <= hN->GetNbinsX() ; i++){
      Double_t fbin = hN->GetBinCenter(i);
      Int_t    ibin = hD->FindFixBin(fbin);
      Double_t eff  = ( hD->GetBinContent(ibin) > 0 ) ? (hN->GetBinContent(i) / hD->GetBinContent(ibin)) : 1.0;
-     cout << "bin " << i << " energy " << hOut->GetBinCenter(i) << "\t" << eff << "\t" << ibin << "\t" << fbin <<"\t" << hD->GetBinContent(ibin) << "\t" << hD->GetBinCenter(ibin) << "\t" << hN->GetBinContent(i) << endl;
      if(eff < 1){
 	hOut->SetBinContent(i,eff);
         hOut->SetBinError(i, eff*sqrt( 1./hN->GetBinContent(i) + 1./hD->GetBinContent(ibin)));
      }else{ 
        hOut->SetBinContent(i,1e-9);
      }
+  } 
+}
+
+void DetermineActiveDetectors(Int_t nrun)
+{
+  
+  TSQLResult *res;
+  TSQLRow    *row;
+  Int_t    chan=0;
+  Int_t    mask=0;
+  char    buff[80];
+  
+  for(Int_t i = 0 ; i < 8 ; i++) ChnCon[i] = -1;
+  
+  TSQLServer *sql = TSQLServer::Connect("mysql://localhost/wnr_run_info",
+					getenv("UCNADBUSER"),getenv("UCNADBPASS"));
+  
+  char query[500];
+  sprintf(query,"select trigger_mask,channel,comment from channel_info where run_number = %d ",nrun);
+  
+  res = (TSQLResult*)sql->Query(query);
+  
+  if(res->GetRowCount() != 0){
+      while((row = (TSQLRow*)res->Next())){
+	  mask = atoi(row->GetField(0));
+	  chan = atoi(row->GetField(1));
+	  sprintf(buff,"%s",row->GetField(2));
+	  if(mask ==1){
+	    cout << "Contents of channel " << chan << " is " << buff << endl;
+	     ChnCon[chan] = (Int_t)ParseComment(buff);
+	  }
+      }
   }
   
+  for(Int_t i = 0 ; i < 8 ; i++)cout << "Channels are  " << ChnCon[i] << endl;
+}
+
+ChnType ParseComment(char *buff)
+{
+  
+  // This code will determine the detector conntected to the channel and return a ChnType code to the
+  // ChnCon array.
+  // spectra gas = * CF4 *
+  char * seg;
+  char key[] = "#";
+  char ch[10];
+  Int_t ngas = 0;
+  // Check to see if this is a drift tube.
+  seg = strpbrk(buff,key);
+  if(seg != NULL){
+    cout << "Drift tube Found " << *seg << " and " << seg[1] << endl;
+    strncpy(ch,seg+1,1);
+    ch[1] = '\0';
+    cout << ch << endl;
+    ngas = atoi(ch);
+    if(ngas == 7 )
+      return SPECTRA;
+    else if(ngas > 0 && ngas < 7)
+      return GASTUBE;
+  }
+  
+  seg = strstr(buff,"PMT");
+  if(seg != NULL)return PMT;
+  seg = strstr(buff,"Gate");
+  if(seg != NULL)return MPGATE;
+  seg = strstr(buff,"TAC");
+  if(seg != NULL)return FFTAC;
+  seg = strstr(buff,"ADC");
+  if(seg != NULL)return FFPH;
+  seg = strstr(buff,"Heigth");
+  if(seg != NULL)return FFPH;
+  
+  return NOTHING;
 }
 
 #endif

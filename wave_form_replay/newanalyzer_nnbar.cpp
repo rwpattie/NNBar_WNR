@@ -29,6 +29,10 @@ struct Fadc_Event {
   Int_t     packet_time_us;
   Int_t     packet_time_l;
   Int_t     board;
+  UInt_t    cycle;
+  Double_t  trigger;
+  Double_t  riseTime;
+  Double_t  width;
   UShort_t  last;
   UShort_t  adc[5000];
   UShort_t  max;
@@ -78,20 +82,29 @@ struct fadc_board_t {
 
 // ---------------------------------------------------------------------------------------
 // Define Function Prototypes
-Double_t GetThreshold(Int_t nrun, Int_t nchn,Int_t nthrsh);
+Double_t GetThreshold(Int_t nrun, Int_t nchn,Int_t nthrsh,Int_t nboard);
 void process_file(char *flnm,TString dir_save);
 void Check_Serial(Int_t *lastser,output_header o,Int_t bn);
+void SmoothArray(std::vector<Double_t> t1,std::vector<Double_t>f1,
+		 std::vector<Double_t>& t2,std::vector<Double_t>& f2,
+		 Int_t smwidth);
+Double_t DerivArray(std::vector<Double_t> val,std::vector<Double_t>& der);
+Double_t SolveLine(Double_t x1,Double_t y1,Double_t x2,Double_t y2,Double_t yp);
+Double_t FindTriggerTime(std::vector<Double_t> val,std::vector<Double_t> time,Double_t thrs);
+Double_t FindWidth(std::vector<Double_t> val,std::vector<Double_t> time,Double_t thrs);
+
+UInt_t GetMPCycle(Int_t ts,Int_t tus);
 Data_Block_t Fill_Data_Blck(UChar_t raw[RAWDATA_LENGTH],Int_t i);
 UShort_t Get_Zero(UShort_t *data,Int_t index);
 void Set_Sample_Data(fadc_board_t *fadc,output_header o,Data_Block_t blck,UShort_t bn,Bool_t FIRST,Bool_t INCRCYCLE,Long64_t nfrm);
 void initialize_fadc_data(fadc_board_t fadc,Int_t nboards,Bool_t FIRST,Int_t nch);
 void process_file(char *flnm,TString dir_save);
-void FillTree(fadc_board_t *fadc,Fadc_Event &fadc_event,TTree *t,Int_t bn,Int_t nchnl,Int_t nbd);
+void FillTree(fadc_board_t *fadc,Fadc_Event &fadc_event,TTree *t,Int_t bn,Int_t nchnl,Int_t nbd,Double_t thrs);
 void SetBranches(TTree *tree,Fadc_Event fadc_event);
 //-------------------------------------------------------------------------------------------
 // Define a set of global variables 
 ULong64_t cycleoffset = pow(2,28);  // Represents the maximum time measured by the 28-bit timestamp
-UShort_t boardnum[3]={1,64,0};      // active board numbers as set by the hardware switch...
+UShort_t boardnum[3]={1,2,3};      // active board numbers as set by the hardware switch...
 Int_t initial_time = 0;
 //---------------------------------------------------------------------------------------
 int main (int argc, char *argv[]) {
@@ -113,7 +126,7 @@ int main (int argc, char *argv[]) {
 	return 0;
 }
 //-------------------------------------------------------------------------------------------
-Double_t GetThreshold(Int_t nrun, Int_t nchn,Int_t nthrsh)
+Double_t GetThreshold(Int_t nrun, Int_t nchn,Int_t nthrsh,Int_t nboard)
 {
   
   TSQLResult *res;
@@ -129,8 +142,9 @@ Double_t GetThreshold(Int_t nrun, Int_t nchn,Int_t nthrsh)
 					getenv("UCNADBUSER"),getenv("UCNADBPASS"));
   
   char query[500];
-  sprintf(query,"select upper_threshold,lower_threshold from channel_info where run_number = %d and channel = %d",
-	  nrun,nchn);
+  sprintf(query,"select upper_threshold,lower_threshold from channel_info"
+		" where run_number = %d and channel = %d and board = %d",
+		nrun,nchn,nboard);
   
   res = (TSQLResult*)sql->Query(query);
   if(res->GetRowCount() != 0){
@@ -157,16 +171,29 @@ void Check_Serial(Int_t *lastser,output_header o,Int_t bn)
       }
 };
 
-void FillTree(fadc_board_t *fadc,Fadc_Event &fadc_event,TTree *t,Int_t bn,Int_t nchnl,Int_t nbd)
+void FillTree(fadc_board_t *fadc,Fadc_Event &fadc_event,TTree *t,Int_t bn,Int_t nchnl,Int_t nbd,Double_t thres)
 {
-          //Int_t nchnl = o.fadc_number;
 	  Int_t index = fadc[bn].channel_data[nchnl].lastindex;
-	  
 	  fadc_event.zero = Get_Zero(fadc[bn].channel_data[nchnl].data,index);
+	  std::vector<Double_t> time,fadcv,smtime5,smfadc5,derv5;
 	  
 	  for (Int_t k = 0; k < index; k++){
 	      fadc_event.adc[k] = fadc[bn].channel_data[nchnl].data[k];
+	      time.push_back((double)fadc[bn].channel_data[nchnl].ft*16e-9 + (double)k*4e-9);
+	      fadcv.push_back(fadc[bn].channel_data[nchnl].data[k]);
 	      //if(nchnl ==7) std::cout << k << "\t" << fadc_event.adc[k] <<  std::endl;
+	  }
+	  // run a 5 sample moving averager over the waveform
+	  if(index > 10){
+	    SmoothArray(time,fadcv,smtime5,smfadc5,5);  
+	    fadc_event.riseTime = DerivArray(smfadc5,derv5);
+	    fadc_event.trigger  = FindTriggerTime(smfadc5,smtime5,thres);
+	    fadc_event.width    = FindWidth(smfadc5,smtime5,thres);
+	  } else {
+	    fadc_event.riseTime = 0.;
+	    fadc_event.trigger = 0.;
+	    fadc_event.width = 0.;
+	    
 	  }
 	  
 	  fadc_event.first_time     = fadc[bn].channel_data[nchnl].ft;
@@ -175,6 +202,7 @@ void FillTree(fadc_board_t *fadc,Fadc_Event &fadc_event,TTree *t,Int_t bn,Int_t 
 	  fadc_event.min            = fadc[bn].channel_data[nchnl].mn;
 	  fadc_event.channel        = (UShort_t)nchnl;
 	  fadc_event.last           = index;
+	  fadc_event.cycle          = fadc[bn].channel_data[nchnl].cycle;
 	  fadc_event.global_time    = fadc[bn].channel_data[nchnl].glt;
 	  fadc_event.packet_time_s  = fadc[bn].channel_data[nchnl].time_s;
 	  fadc_event.packet_time_us = fadc[bn].channel_data[nchnl].time_us;
@@ -183,7 +211,8 @@ void FillTree(fadc_board_t *fadc,Fadc_Event &fadc_event,TTree *t,Int_t bn,Int_t 
 	  if (index > 0 ){
 	    UShort_t mean = 0;
 	    if(index > 15){
-	      for(int i = 0 ; i < 15 ; i++)mean += fadc[bn].channel_data[nchnl].data[i];
+	      for(int i = 0 ; i < 15 ; i++)
+		mean += fadc[bn].channel_data[nchnl].data[i];
 	      fadc_event.ped = mean/15.;
 	    } else 
 	       fadc_event.ped = 0;
@@ -262,7 +291,12 @@ void Set_Sample_Data(fadc_board_t *fadc,output_header o,Data_Block_t blck,UShort
 	  fadc[bn].channel_data[nchnl].time_local = o.tv_sec - initial_time;
       }
       // if the clock has looped incriment the cycle counter.
-      if(INCRCYCLE || blck.timestamp == 0)fadc[bn].channel_data[nchnl].cycle++;
+      if(INCRCYCLE || blck.timestamp == 0){
+	fadc[bn].channel_data[nchnl].cycle++;
+	if(fadc[bn].channel_data[nchnl].cycle < GetMPCycle(fadc[bn].channel_data[nchnl].time_local,o.tv_usec)){
+		fadc[bn].channel_data[nchnl].cycle = GetMPCycle(fadc[bn].channel_data[nchnl].time_local,o.tv_usec);
+	    }
+      }
 }
 //------------------------------------------------------------------------------------------------------
 void SetBranches(TTree *tree,Fadc_Event fadc_event)
@@ -325,9 +359,11 @@ void process_file(char *flnm,TString dir_save)
   UChar_t raw[RAWDATA_LENGTH];
   
   Int_t lastser[3] = {-1,-1,-1};
+  // Get the thresholds....
   std::vector<Int_t> threshold;
-  for(Int_t i = 0 ; i < 8 ; i++)threshold.push_back((Int_t)GetThreshold(nrun,i,0)); // Needs to replaced with a routine to get the 
-				                        			  // threshold from the odb or mysql db.....
+  for(Int_t j = 1 ; j < 4 ; j++)
+    for(Int_t i = 0 ; i < 8 ; i++)
+	threshold.push_back((Int_t)GetThreshold(nrun,i,0,j));  
   Int_t sample = 8;
   //---------------------------------------------------------------------------------------
   // create an output tree..............
@@ -340,12 +376,16 @@ void process_file(char *flnm,TString dir_save)
   t->Branch("packet_time_l",&fadc_event.packet_time_l,"packet_time_l/I");
   t->Branch("board",&fadc_event.board,"board/I");
   t->Branch("last",&fadc_event.last,"last/s");
+  t->Branch("cycle",&fadc_event.cycle,"cycle/i");
   t->Branch("adc",fadc_event.adc,"adc[last]/s");
   t->Branch("max",&fadc_event.max,"max/s");
   t->Branch("min",&fadc_event.min,"min/s");
   t->Branch("zero",&fadc_event.zero,"zero/s");
   t->Branch("ped",&fadc_event.ped,"ped/s");
   t->Branch("channel",&fadc_event.channel,"channel/s");
+  t->Branch("trigger",&fadc_event.trigger,"trigger/D");
+  t->Branch("risetime",&fadc_event.riseTime,"risetime/D");
+  t->Branch("width",&fadc_event.width,"width/D");
   //--------------------------------------------------------------------------------------
   // loop through the raw data file
   Long64_t nframe = 0;
@@ -412,7 +452,9 @@ void process_file(char *flnm,TString dir_save)
 		Set_Sample_Data(fadc,o,blck,bn,false,true,nframe);
       }else { 
 	 // Fill tree data struct..................................................................
-	  FillTree(fadc,fadc_event,t,bn,o.fadc_number,o.board_number);
+	
+	  FillTree(fadc,fadc_event,t,bn,o.fadc_number,o.board_number,
+		   (double)threshold[o.fadc_number+bn*8]);
 	  nevent++;
 	  // increase the cycle number if the current timestamp exceeds the block timestamp
 	  Int_t nchnl = o.fadc_number;
@@ -420,6 +462,9 @@ void process_file(char *flnm,TString dir_save)
 	    fadc[bn].channel_data[nchnl].cycle++;
 	    fprintf(tsrec,"Old Timestamp = %u, New Timestamp = %lli, cycle = %u, Channel = %d\n",fadc[bn].channel_data[nchnl].curr,
 		    blck.timestamp,fadc[bn].channel_data[nchnl].cycle-1,nchnl);
+	    if(fadc[bn].channel_data[nchnl].cycle < GetMPCycle(fadc[bn].channel_data[nchnl].time_local,o.tv_usec)){
+		fadc[bn].channel_data[nchnl].cycle = GetMPCycle(fadc[bn].channel_data[nchnl].time_local,o.tv_usec);
+	    }
 	  }
 	  initialize_fadc_data(fadc,3,false,o.fadc_number);
 	  nframe = 0;
@@ -430,5 +475,97 @@ void process_file(char *flnm,TString dir_save)
   }
   fclose(inf);
 }
+
+UInt_t GetMPCycle(Int_t ts,Int_t tus)
+{
+ 
+  Double_t tt = (double)ts + (double)tus*1e-6;
+  UInt_t   mp = (UInt_t)(tt/0.025);
+  if(mp > 7e6) mp = 23;
+  return mp-23;
+}
+
+
+void SmoothArray(std::vector<Double_t> t1,std::vector<Double_t>f1,
+		 std::vector<Double_t>& t2,std::vector<Double_t>& f2,
+		 Int_t smwidth)
+{
+  Int_t offset = smwidth / 2;
+  for(Int_t i = offset ; i < (int)f1.size() - offset ; i++){
+      t2.push_back(t1[i]);
+      Double_t fsum = 0;
+      for(int j = 0 ; j < smwidth ; j++){
+	fsum += f1[i+j-offset];
+      }
+      f2.push_back(fsum/(double)smwidth);
+  }
+  
+}
+
+Double_t DerivArray(std::vector<Double_t> val,std::vector<Double_t>& der)
+{
+    //very simple 2 point derivative. probably very wrong but a first step....
+    Double_t dt = 1.;
+    Int_t trgp = 0;
+    Int_t maxp = 0;
+    
+    for(Int_t i = 1 ; i < (int)val.size()-1 ; i++){
+      der.push_back((val[i+1] - val[i-1])/(2.*dt));
+      if(der[i-1] > 5 && trgp == 0 )trgp = i;
+      if(trgp > 0  && der[i-1] < 0 && maxp == 0)maxp = i;
+    }
+    Double_t t0 = SolveLine((double)(trgp-2),der[trgp-2],(double)(trgp+2),der[trgp+2],5.);
+    Double_t t1 = SolveLine((double)(maxp-2),der[maxp-2],(double)(maxp+2),der[maxp+2],0.);
+    return (double)(t1 - t0)*4.0;
+}
+
+Double_t SolveLine(Double_t x1,Double_t y1,Double_t x2,Double_t y2,Double_t yp)
+{
+    Double_t m = (y2-y1)/(x2-x1);
+    //y = mx + b ... (y-b)/m = x ...  m = (yp - y1)/(xp - x1) ...  xp = x1 + (yp-y1)/m
+    Double_t xp = x1 + (yp-y1)/m;
+    return xp;
+}
+
+Double_t FindTriggerTime(std::vector<Double_t> val,std::vector<Double_t> time,Double_t thrs)
+{
+    Int_t ntrg=0;
+    while(val[ntrg] < thrs && ntrg < (int)val.size())
+      ntrg++;
+    
+    if(ntrg == (int)val.size()){
+      thrs*=0.9;
+      ntrg=0;
+      while(val[ntrg] < thrs && ntrg < (int)val.size())
+      ntrg++;
+    }
+    
+    Double_t tTrig = SolveLine(time[ntrg-2],val[ntrg-2],time[ntrg+2],val[ntrg+2],thrs);
+    return tTrig;
+}
+
+Double_t FindWidth(std::vector<Double_t> val,std::vector<Double_t> time,Double_t thrs)
+{
+    Int_t t0 = 0;  // first trigger crossing
+    Int_t t1 = 0;  // second trigger crossing
+    
+    for(UInt_t i = 0 ; i < val.size() ; i++){
+	if(val[i] > thrs && t0 == 0)t0 = i;
+	if(val[i] < thrs && t0 > 0 && t1 == 0) t1 = i;
+    }
+    if(t0 == 0){
+        thrs*=0.9;
+	for(UInt_t i = 0 ; i < val.size() ; i++){
+	  if(val[i] > thrs && t0 == 0)t0 = i;
+	  if(val[i] < thrs && t0 > 0 && t1 == 0) t1 = i;
+	}
+    }
+     
+    
+    Double_t tt0 = SolveLine(time[t0-2],val[t0-2],time[t0+2],val[t0+2],thrs);
+    Double_t tt1 = SolveLine(time[t1-2],val[t1-2],time[t1+2],val[t1+2],thrs);
+    return (tt1-tt0);
+}
+
   
 #endif

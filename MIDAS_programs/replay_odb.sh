@@ -28,14 +28,16 @@ fi
 # create the file
 touch $RUNLIST
 # save the current odb file
+echo 'about to save current odb'
 odbedit -e Default -c 'save current.odb'
 # set the unique id for the channel_info table to 0
-nkey=0
+nkey=3310
+echo 'about to loop'
 # loop over some large number that captures all the runs in question
-for (( i=0; i<700; i++ ))
+for (( i=2174; i<2334; i++ ))
 do
   # set the odb file 
-  ODBFILE=$WNR_ODB_DIR/run00$(($i)).odb
+  ODBFILE=$WNR_ODB_DIR/run0$(($i)).odb
   if [ -f $ODBFILE ]
   then
   # if the odbfile exists then proceed to information retrieval 
@@ -85,6 +87,9 @@ do
   # however if multiple boards are set up a second loop over the boards is 
   # required.
   #-------------------------------------------------------------------------------
+  for (( k=0; k<3 ; k++ ))
+  do
+  NBRD=$(odbedit -e Default -c 'ls "/Equipment/fADCs/Settings/NFADC 0'$k'/nboard"' | awk '{ s = ""; for (i = 2; i <= NF; i++) s = s $i " "; print s }')
   for (( j=0; j<8 ; j++ )) # loop over each channel
   do
   
@@ -93,19 +98,20 @@ do
     
     # Get the trigger mask, upper/lower thresholds, presamples, postsamples, sd_factor, and channel description from the
     # the MIDAS odb files.
-    TRMSK=$(odbedit -e Default -c 'ls "/Equipment/fADCs/Settings/NFADC 00/Channel '$j'/trigger_mask"' | awk '{ s = ""; for (i = 2; i <= NF; i++) s = s $i " "; print s }')
-    UTHRSH=$(odbedit -e Default -c 'ls "/Equipment/fADCs/Settings/NFADC 00/Channel '$j'/upper_threshold"' | awk '{ s = ""; for (i = 2; i <= NF; i++) s = s $i " "; print s }')
-    LTHRSH=$(odbedit -e Default -c 'ls "/Equipment/fADCs/Settings/NFADC 00/Channel '$j'/lower_threshold"' | awk '{ s = ""; for (i = 2; i <= NF; i++) s = s $i " "; print s }')
-    PRESMPL=$(odbedit -e Default -c 'ls "/Equipment/fADCs/Settings/NFADC 00/Channel '$j'/presamples"' | awk '{ s = ""; for (i = 2; i <= NF; i++) s = s $i " "; print s }')
-    PSTSMPL=$(odbedit -e Default -c 'ls "/Equipment/fADCs/Settings/NFADC 00/Channel '$j'/stretch_samples"' | awk '{ s = ""; for (i = 2; i <= NF; i++) s = s $i " "; print s }')
-    SDFACTR=$(odbedit -e Default -c 'ls "/Equipment/fADCs/Settings/NFADC 00/Channel '$j'/sd_factor"' | awk '{ s = ""; for (i = 2; i <= NF; i++) s = s $i " "; print s }')
-    COMMENTChl=$(odbedit -e Default -c 'ls "/Experiment/Run Parameters/Channel '$j'"' | awk '{ s = ""; for (i = 3; i <= NF; i++) s = s $i " "; print s }')
+    TRMSK=$(odbedit -e Default -c 'ls "/Equipment/fADCs/Settings/NFADC 0'$k'/Channel '$j'/trigger_mask"' | awk '{ s = ""; for (i = 2; i <= NF; i++) s = s $i " "; print s }')
+    UTHRSH=$(odbedit -e Default -c 'ls "/Equipment/fADCs/Settings/NFADC 0'$k'/Channel '$j'/upper_threshold"' | awk '{ s = ""; for (i = 2; i <= NF; i++) s = s $i " "; print s }')
+    LTHRSH=$(odbedit -e Default -c 'ls "/Equipment/fADCs/Settings/NFADC 0'$k'/Channel '$j'/lower_threshold"' | awk '{ s = ""; for (i = 2; i <= NF; i++) s = s $i " "; print s }')
+    PRESMPL=$(odbedit -e Default -c 'ls "/Equipment/fADCs/Settings/NFADC 0'$k'/Channel '$j'/presamples"' | awk '{ s = ""; for (i = 2; i <= NF; i++) s = s $i " "; print s }')
+    PSTSMPL=$(odbedit -e Default -c 'ls "/Equipment/fADCs/Settings/NFADC 0'$k'/Channel '$j'/stretch_samples"' | awk '{ s = ""; for (i = 2; i <= NF; i++) s = s $i " "; print s }')
+    SDFACTR=$(odbedit -e Default -c 'ls "/Equipment/fADCs/Settings/NFADC 0'$k'/Channel '$j'/sd_factor"' | awk '{ s = ""; for (i = 2; i <= NF; i++) s = s $i " "; print s }')
+    COMMENTChl=$(odbedit -e Default -c 'ls "/Experiment/Run Parameters/Board '$(($k+1))' Channel '$j'"' | awk '{ s = ""; for (i = 5; i <= NF; i++) s = s $i " "; print s }')
     # generate the sql command file to insert these variables to the table
-    echo "insert into wnr_run_info.channel_info (run_number,trigger_mask,channel,upper_threshold,lower_threshold,presamples,postsamples,sd_factor,comment,nrun) values($Run_number,$TRMSK,$j,$UTHRSH,$LTHRSH,$PRESMPL,$PSTSMPL,$SDFACTR,'$COMMENTChl',$nkey)" >> input_line.sql
+    echo "insert into wnr_run_info.channel_info (run_number,trigger_mask,channel,board,upper_threshold,lower_threshold,presamples,postsamples,sd_factor,comment,nrun) values($Run_number,$TRMSK,$j,$NBRD,$UTHRSH,$LTHRSH,$PRESMPL,$PSTSMPL,$SDFACTR,'$COMMENTChl',$nkey)" >> input_line.sql
     # send the command to the database
     mysql -u $UCNADBUSER --password=$UCNADBPASS < input_line.sql
     # incriment the unique key for the channel_info table.
     nkey=$(($nkey+1))
+  done
   done
   
   fi
